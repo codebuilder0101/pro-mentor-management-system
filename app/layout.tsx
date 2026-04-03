@@ -16,7 +16,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Programa de Mentoria Método C.O.M.A.V",
-  description: "Transformando profissionais através da Metodologia Enxuta, Melhoria de Processos e Gestão de Pessoas",
+  description:
+    "Mentoria e aprendizagem profissional para desenvolvimento organizacional: liderança, adaptabilidade, gestão de pessoas, decisão e melhoria de processos.",
 };
 
 export default function RootLayout({
@@ -26,7 +27,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="pt-BR"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">

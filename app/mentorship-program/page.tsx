@@ -10,57 +10,87 @@ export default function MentorshipProgramPage() {
   const features = [
     {
       icon: '🎓',
-      title: 'Mentoria Individual',
-      description: 'Sessões 1:1 personalizadas focadas em seus objetivos específicos',
+      title: 'Mentoria individual',
+      description:
+        'Encontros 1:1 para aprofundar temas pessoais de liderança, carreira e desafios no trabalho.',
+    },
+    {
+      icon: '👥',
+      title: 'Mentoria em grupo',
+      description:
+        'Sessões coletivas para troca de experiências, alinhamento e aprendizado entre pares.',
     },
     {
       icon: '📚',
-      title: 'Material Exclusivo',
-      description: 'Acesso a biblioteca completa de recursos, templates e ferramentas',
-    },
-    {
-      icon: '🎥',
-      title: 'Aulas ao Vivo',
-      description: 'Workshops mensais e webinars sobre temas avançados em Lean',
-    },
-    {
-      icon: '💬',
-      title: 'Comunidade Privada',
-      description: 'Grupo exclusivo para networking e troca de experiências',
+      title: 'Biblioteca e materiais',
+      description:
+        'Acesso a conteúdos, leituras, ferramentas e materiais estratégicos de apoio à jornada.',
     },
     {
       icon: '📊',
-      title: 'Projetos Práticos',
-      description: 'Aplique conceitos em projetos reais com feedback do mentor',
+      title: 'Entregáveis orientados',
+      description:
+        'Exercícios, reflexões e planos de ação acompanhados ao longo das fases do programa.',
+    },
+    {
+      icon: '💬',
+      title: 'Canais de comunicação',
+      description:
+        'Combinamos encontros síncronos com apoio por canais combinados (conforme proposta fechada).',
     },
     {
       icon: '📜',
-      title: 'Certificado',
-      description: 'Certificado de conclusão reconhecido ao final do programa',
+      title: 'Reconhecimento',
+      description:
+        'Certificado ou comprovação de participação ao concluir a jornada, conforme regras do programa.',
     },
   ];
 
-  const howItWorks = [
+  const phases = [
     {
-      step: '1',
-      title: 'Avaliação Inicial',
-      description: 'Sessão de diagnóstico para entender seu contexto e definir objetivos',
+      n: 1,
+      title: 'Contexto e propósito',
+      sessions: 3,
+      focus: 'Diagnóstico de cenário, objetivos e prioridades profissionais.',
     },
     {
-      step: '2',
-      title: 'Plano Personalizado',
-      description: 'Criação de roadmap customizado baseado em suas necessidades',
+      n: 2,
+      title: 'Liderança e influência',
+      sessions: 3,
+      focus: 'Postura de liderança, adaptação e relação com equipes e stakeholders.',
     },
     {
-      step: '3',
-      title: 'Execução e Aprendizado',
-      description: 'Sessões regulares, acesso a conteúdos e aplicação prática',
+      n: 3,
+      title: 'Gestão de pessoas e comunicação',
+      sessions: 3,
+      focus: 'Feedback, desenvolvimento, conversas difíceis e cultura de performance.',
     },
     {
-      step: '4',
-      title: 'Resultados e Certificação',
-      description: 'Avaliação de progresso e emissão de certificado',
+      n: 4,
+      title: 'Decisão, priorização e estratégia',
+      sessions: 3,
+      focus: 'Clareza de decisões, alinhamento com estratégia e gestão do tempo e foco.',
     },
+    {
+      n: 5,
+      title: 'Processos e melhoria contínua',
+      sessions: 2,
+      focus: 'Excelência operacional e melhoria de processos (incluindo base Lean quando aplicável).',
+    },
+    {
+      n: 6,
+      title: 'Consolidação e plano de ação',
+      sessions: 2,
+      focus: 'Síntese da jornada, métricas de acompanhamento e próximos passos sustentáveis.',
+    },
+  ];
+
+  const expectedOutcomes = [
+    'Maior clareza sobre prioridades de carreira e papel de liderança',
+    'Ferramentas práticas para gestão de pessoas, comunicação e decisão',
+    'Melhor capacidade de adaptação a mudanças organizacionais',
+    'Visão mais estratégica sobre processos e resultados',
+    'Plano de ação alinhado ao Método C.O.M.A.V e ao seu contexto',
   ];
 
   const pricingTiers = [
@@ -70,11 +100,10 @@ export default function MentorshipProgramPage() {
       price: 'R$ 999',
       period: '/mês',
       features: [
-        '4 sessões individuais por mês',
-        'Acesso à plataforma de conteúdos',
-        'Comunidade privada',
-        'Suporte por email',
-        'Workshops mensais',
+        'Jornada estruturada em fases (referência: 16 sessões no programa completo)',
+        'Combinação de sessões individuais e em grupo (conforme modalidade)',
+        'Acesso à biblioteca de aprendizagem estratégica',
+        'Materiais e apoio entre encontros',
       ],
       highlighted: false,
     },
@@ -86,71 +115,71 @@ export default function MentorshipProgramPage() {
       originalPrice: 'R$ 999',
       features: [
         'Tudo do plano trimestral',
-        '6 sessões individuais por mês',
-        'Projetos práticos orientados',
-        'Suporte prioritário',
-        'Materiais exclusivos',
-        'Certificado de conclusão',
+        'Maior profundidade na jornada e nos entregáveis',
+        'Acompanhamento reforçado em projetos e decisões',
+        'Prioridade em combinar datas e formatos de sessão',
+        'Certificado / comprovação ao concluir (conforme regras)',
       ],
       highlighted: true,
-      badge: 'Mais Popular',
+      badge: 'Mais popular',
     },
   ];
 
   const faqs = [
     {
-      question: 'Preciso ter conhecimento prévio em Lean?',
+      question: 'O programa é só para quem já é líder?',
       answer:
-        'Não é necessário! O programa é adaptado ao seu nível de conhecimento. Trabalhamos tanto com iniciantes quanto com profissionais que já têm experiência e querem se aprofundar.',
+        'Não. A jornada atende líderes, futuros líderes, especialistas e profissionais em transição. O foco é desenvolvimento de competências de liderança, adaptação e gestão — em qualquer nível hierárquico.',
     },
     {
-      question: 'Como funcionam as sessões de mentoria?',
+      question: 'Como funcionam as 16 sessões e as 6 fases?',
       answer:
-        'As sessões são realizadas por videoconferência em horários agendados previamente. Cada sessão dura aproximadamente 1 hora e é totalmente focada nos seus objetivos e desafios específicos.',
+        'A proposta organiza o percurso em seis fases temáticas, totalizando 16 encontros de mentoria — combinando modalidades individuais e em grupo, conforme combinado na adesão. Os temas evoluem do diagnóstico à consolidação com plano de ação.',
+    },
+    {
+      question: 'O Método C.O.M.A.V substitui temas como Lean?',
+      answer:
+        'O Método C.O.M.A.V é a estrutura da mentoria. Temas de excelência operacional e Lean podem aparecer como parte da base de conhecimento, especialmente em processos e melhoria contínua — sem ser o único foco da identidade do programa.',
     },
     {
       question: 'Posso cancelar minha assinatura?',
       answer:
-        'Sim, você pode cancelar a qualquer momento. Recomendamos completar pelo menos um ciclo trimestral para obter resultados significativos, mas não há multa por cancelamento.',
-    },
-    {
-      question: 'O certificado é reconhecido?',
-      answer:
-        'Sim, ao concluir o programa você receberá um certificado digital que comprova sua participação e pode ser compartilhado no LinkedIn e em currículos.',
+        'Sim, as regras de cancelamento seguem o contrato ou proposta comercial fechada. Em geral, recomendamos completar um ciclo mínimo para perceber resultados consistentes.',
     },
   ];
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
       <section className="bg-gradient-to-br from-[#2563EB] to-blue-700 text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <p className="text-lg font-semibold text-blue-100 mb-3 uppercase tracking-wide">
+            Adapte-se para Prosperar
+          </p>
           <h1 className="text-4xl md:text-6xl font-bold mb-6">
-            Programa de Mentoria Método C.O.M.A.V
+            Programa de Mentoria — Método C.O.M.A.V
           </h1>
           <p className="text-xl md:text-2xl mb-8 text-blue-100 max-w-3xl mx-auto">
-            Acelere sua transformação profissional com acompanhamento especializado em
-            Metodologia Enxuta, Melhoria de Processos e Gestão de Pessoas
+            Uma jornada estruturada em <strong className="text-white">6 fases</strong> e{' '}
+            <strong className="text-white">16 sessões</strong>, com mentoria individual e em grupo,
+            para desenvolver liderança, adaptabilidade, gestão de pessoas e resultados
+            organizacionais.
           </p>
           <Button href="/schedule-session" size="lg" variant="secondary">
-            Agendar Sessão Gratuita
+            Agendar sessão de diagnóstico gratuita
           </Button>
         </div>
       </section>
 
-      {/* Features Section */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-900">
-            O que está incluído no programa?
+            O que está incluído
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feature, index) => (
               <Card key={index} hover>
                 <div className="text-4xl mb-4">{feature.icon}</div>
-                <h3 className="text-xl font-semibold mb-2 text-gray-900">
-                  {feature.title}
-                </h3>
+                <h3 className="text-xl font-semibold mb-2 text-gray-900">{feature.title}</h3>
                 <p className="text-gray-600">{feature.description}</p>
               </Card>
             ))}
@@ -158,45 +187,61 @@ export default function MentorshipProgramPage() {
         </div>
       </section>
 
-      {/* How It Works Section */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-900">
-            Como funciona?
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-900">
+            A jornada em 6 fases
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {howItWorks.map((item, index) => (
-              <div key={index} className="text-center">
-                <div className="w-16 h-16 bg-[#2563EB] text-white rounded-full flex items-center justify-center text-2xl font-bold mb-4 mx-auto">
-                  {item.step}
-                </div>
-                <h3 className="text-lg font-semibold mb-2 text-gray-900">
-                  {item.title}
-                </h3>
-                <p className="text-gray-600 text-sm">{item.description}</p>
-              </div>
+          <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
+            Visão simplificada do percurso. A distribuição exata das 16 sessões entre fases e
+            formatos (individual ou grupo) é alinhada na proposta de mentoria.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {phases.map((p) => (
+              <Card key={p.n} hover className="border-t-4 border-[#2563EB]">
+                <div className="text-sm font-semibold text-[#2563EB] mb-1">Fase {p.n}</div>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">{p.title}</h3>
+                <p className="text-sm text-gray-500 mb-2">{p.sessions} sessões nesta fase</p>
+                <p className="text-gray-600 text-sm">{p.focus}</p>
+              </Card>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Pricing Section */}
       <section className="py-20 bg-gray-50">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-8 text-gray-900">
+            Resultados esperados
+          </h2>
+          <Card>
+            <ul className="space-y-3 text-gray-700">
+              {expectedOutcomes.map((o, i) => (
+                <li key={i} className="flex items-start">
+                  <span className="text-green-600 mr-2">✓</span>
+                  <span>{o}</span>
+                </li>
+              ))}
+            </ul>
+          </Card>
+        </div>
+      </section>
+
+      <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-900">
-            Escolha seu plano
+            Referência de investimento
           </h2>
           <p className="text-center text-gray-600 mb-12 text-lg">
-            Invista no seu desenvolvimento profissional com planos flexíveis
+            Valores ilustrativos para o MVP; confirme condições comerciais e entregáveis na proposta
+            formal.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
             {pricingTiers.map((tier, index) => (
               <Card
                 key={index}
                 className={`relative ${
-                  tier.highlighted
-                    ? 'border-2 border-[#2563EB] shadow-xl'
-                    : 'border border-gray-200'
+                  tier.highlighted ? 'border-2 border-[#2563EB] shadow-xl' : 'border border-gray-200'
                 }`}
               >
                 {tier.badge && (
@@ -233,7 +278,7 @@ export default function MentorshipProgramPage() {
                   className="w-full"
                   size="lg"
                 >
-                  Começar Agora
+                  Falar sobre este plano
                 </Button>
               </Card>
             ))}
@@ -241,11 +286,10 @@ export default function MentorshipProgramPage() {
         </div>
       </section>
 
-      {/* FAQ Section */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-gray-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-900">
-            Perguntas Frequentes
+            Perguntas frequentes
           </h2>
           <div className="space-y-4">
             {faqs.map((faq, index) => (
@@ -256,14 +300,12 @@ export default function MentorshipProgramPage() {
               >
                 <Card>
                   <div className="flex justify-between items-center">
-                    <h3 className="text-lg font-semibold text-gray-900">{faq.question}</h3>
-                    <span className="text-2xl text-[#2563EB]">
+                    <h3 className="text-lg font-semibold text-gray-900 pr-4">{faq.question}</h3>
+                    <span className="text-2xl text-[#2563EB] shrink-0">
                       {activeFaq === index ? '−' : '+'}
                     </span>
                   </div>
-                  {activeFaq === index && (
-                    <p className="mt-4 text-gray-600">{faq.answer}</p>
-                  )}
+                  {activeFaq === index && <p className="mt-4 text-gray-600">{faq.answer}</p>}
                 </Card>
               </div>
             ))}
@@ -271,17 +313,14 @@ export default function MentorshipProgramPage() {
         </div>
       </section>
 
-      {/* Final CTA */}
       <section className="py-20 bg-gradient-to-r from-[#2563EB] to-blue-700 text-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            Pronto para transformar sua carreira?
-          </h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-6">Pronto para estruturar sua jornada?</h2>
           <p className="text-xl mb-8 text-blue-100">
-            Agende uma sessão gratuita e descubra como o programa pode ajudá-lo
+            Comece por uma sessão gratuita de entendimento e diagnóstico dos seus objetivos.
           </p>
           <Button href="/schedule-session" size="lg" variant="secondary">
-            Agendar Sessão Gratuita
+            Agendar sessão de diagnóstico
           </Button>
         </div>
       </section>

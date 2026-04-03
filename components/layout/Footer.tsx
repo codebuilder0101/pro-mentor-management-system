@@ -7,10 +7,10 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
-            <h3 className="text-xl font-bold text-white mb-4">Programa de Mentoria Método C.O.M.A.V</h3>
+            <h3 className="text-xl font-bold text-white mb-4">Adapte-se para Prosperar</h3>
             <p className="text-sm">
-              Transformando profissionais através da Metodologia Enxuta,
-              Melhoria de Processos e Gestão de Pessoas.
+              Aprendizagem profissional e mentoria para desenvolvimento organizacional — liderança,
+              adaptabilidade, gestão de pessoas e decisão, com o Método C.O.M.A.V.
             </p>
           </div>
 
@@ -24,17 +24,17 @@ export default function Footer() {
               </li>
               <li>
                 <Link href="/free-content" className="hover:text-white transition-colors">
-                  Conteúdo Gratuito
+                  Biblioteca estratégica
                 </Link>
               </li>
               <li>
                 <Link href="/schedule-session" className="hover:text-white transition-colors">
-                  Agendar Sessão
+                  Sessão de diagnóstico
                 </Link>
               </li>
               <li>
                 <Link href="/mentorship-program" className="hover:text-white transition-colors">
-                  Programa de Mentoria
+                  Programa de mentoria
                 </Link>
               </li>
             </ul>
@@ -51,7 +51,10 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm">
-          <p>&copy; {new Date().getFullYear()} Programa de Mentoria Método C.O.M.A.V. Todos os direitos reservados.</p>
+          <p>
+            &copy; {new Date().getFullYear()} Programa de Mentoria Método C.O.M.A.V. Todos os
+            direitos reservados.
+          </p>
         </div>
       </div>
     </footer>

@@ -46,16 +46,14 @@ export default function ScheduleSessionPage() {
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
           <Card className="text-center">
             <div className="text-6xl mb-6">✅</div>
-            <h2 className="text-3xl font-bold mb-4 text-gray-900">
-              Solicitação Enviada com Sucesso!
-            </h2>
+            <h2 className="text-3xl font-bold mb-4 text-gray-900">Solicitação enviada</h2>
             <p className="text-lg text-gray-600 mb-6">
-              Recebemos sua solicitação de agendamento para{' '}
+              Recebemos seu pedido de agendamento da sessão de entendimento para{' '}
               <strong>{formData.date}</strong> às <strong>{formData.time}</strong>.
             </p>
             <p className="text-gray-600 mb-8">
-              Entraremos em contato em breve pelo email <strong>{formData.email}</strong>{' '}
-              ou telefone <strong>{formData.phone}</strong> para confirmar sua sessão.
+              Entraremos em contato pelo email <strong>{formData.email}</strong> ou telefone{' '}
+              <strong>{formData.phone}</strong> para confirmar o horário e enviar o link da reunião.
             </p>
             <Button
               onClick={() => {
@@ -70,7 +68,7 @@ export default function ScheduleSessionPage() {
                 });
               }}
             >
-              Agendar Nova Sessão
+              Novo agendamento
             </Button>
           </Card>
         </div>
@@ -80,57 +78,59 @@ export default function ScheduleSessionPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
       <section className="bg-gradient-to-r from-[#2563EB] to-blue-700 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Agendar Sessão</h1>
-          <p className="text-xl text-blue-100">
-            Reserve sua sessão gratuita de orientação em Lean
+          <p className="text-blue-100 font-semibold uppercase tracking-wide text-sm mb-2">
+            Programa de Mentoria Método C.O.M.A.V
+          </p>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">Sessão de diagnóstico gratuita</h1>
+          <p className="text-xl text-blue-100 max-w-3xl">
+            Uma primeira conversa para <strong className="text-white">entender seus objetivos</strong>,{' '}
+            <strong className="text-white">mapear desafios</strong> e alinhar expectativas sobre mentoria,
+            palestras ou treinamentos — sem compromisso comercial.
           </p>
         </div>
       </section>
 
-      {/* Content */}
       <section className="py-12">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-            {/* Info Section */}
             <Card>
-              <h2 className="text-2xl font-bold mb-4 text-gray-900">
-                O que esperar da sessão?
-              </h2>
+              <h2 className="text-2xl font-bold mb-4 text-gray-900">O que é esta sessão?</h2>
+              <p className="text-gray-600 mb-4">
+                Não é uma aula nem uma consultoria fechada: é um encontro de{' '}
+                <strong>escuta e diagnóstico</strong> para conhecer seu contexto profissional, suas
+                prioridades e o tipo de apoio que faz mais sentido (programa de mentoria, formatos em
+                grupo, palestras ou cursos).
+              </p>
               <ul className="space-y-3 text-gray-600">
                 <li className="flex items-start">
                   <span className="text-green-600 mr-2">✓</span>
-                  <span>
-                    Análise inicial das suas necessidades e objetivos profissionais
-                  </span>
+                  <span>Alinhamento sobre metas de carreira e desafios atuais</span>
                 </li>
                 <li className="flex items-start">
                   <span className="text-green-600 mr-2">✓</span>
-                  <span>Orientação personalizada sobre aplicação de Lean</span>
+                  <span>Esclarecimento de dúvidas sobre a jornada em fases e modalidades</span>
                 </li>
                 <li className="flex items-start">
                   <span className="text-green-600 mr-2">✓</span>
-                  <span>Apresentação do programa de mentoria</span>
+                  <span>Indicação de próximos passos, quando houver aderência mútua</span>
                 </li>
                 <li className="flex items-start">
                   <span className="text-green-600 mr-2">✓</span>
-                  <span>Sessão de 45 minutos por videoconferência</span>
+                  <span>Duração aproximada de 45 minutos por videoconferência</span>
                 </li>
                 <li className="flex items-start">
                   <span className="text-green-600 mr-2">✓</span>
-                  <span>100% gratuita, sem compromisso</span>
+                  <span>100% gratuita nesta etapa, sem obrigação de contratação</span>
                 </li>
               </ul>
             </Card>
 
             <Card className="bg-blue-50">
-              <h2 className="text-2xl font-bold mb-4 text-gray-900">
-                Horários Disponíveis
-              </h2>
+              <h2 className="text-2xl font-bold mb-4 text-gray-900">Horários disponíveis</h2>
               <p className="text-gray-600 mb-4">
-                Oferecemos sessões de segunda a sexta-feira nos seguintes horários:
+                Atendimento em dias úteis, nos horários abaixo (confirmação após envio do formulário):
               </p>
               <div className="grid grid-cols-2 gap-2">
                 {timeSlots.map((slot) => (
@@ -142,21 +142,16 @@ export default function ScheduleSessionPage() {
                   </div>
                 ))}
               </div>
-              <p className="text-sm text-gray-500 mt-4">
-                * Horários no fuso de Brasília (GMT-3)
-              </p>
+              <p className="text-sm text-gray-500 mt-4">* Horários no fuso de Brasília (GMT-3)</p>
             </Card>
           </div>
 
-          {/* Form */}
           <Card>
-            <h2 className="text-2xl font-bold mb-6 text-gray-900">
-              Preencha seus dados
-            </h2>
+            <h2 className="text-2xl font-bold mb-6 text-gray-900">Agendar conversa</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                  Nome Completo *
+                  Nome completo *
                 </label>
                 <input
                   type="text"
@@ -205,7 +200,7 @@ export default function ScheduleSessionPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-1">
-                    Data Preferencial *
+                    Data preferencial *
                   </label>
                   <input
                     type="date"
@@ -221,7 +216,7 @@ export default function ScheduleSessionPage() {
 
                 <div>
                   <label htmlFor="time" className="block text-sm font-medium text-gray-700 mb-1">
-                    Horário Preferencial *
+                    Horário preferencial *
                   </label>
                   <select
                     id="time"
@@ -243,7 +238,7 @@ export default function ScheduleSessionPage() {
 
               <div>
                 <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
-                  Mensagem (opcional)
+                  Contexto (opcional)
                 </label>
                 <textarea
                   id="message"
@@ -251,13 +246,13 @@ export default function ScheduleSessionPage() {
                   rows={4}
                   value={formData.message}
                   onChange={handleChange}
-                  placeholder="Conte-nos um pouco sobre seus objetivos e o que você espera da sessão..."
+                  placeholder="Conte brevemente sua situação atual, objetivos e o que gostaria de explorar nesta conversa..."
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
                 />
               </div>
 
               <Button type="submit" size="lg" className="w-full">
-                Confirmar Agendamento
+                Enviar pedido de agendamento
               </Button>
             </form>
           </Card>

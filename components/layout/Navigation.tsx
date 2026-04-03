@@ -10,9 +10,9 @@ export default function Navigation() {
 
   const navItems = [
     { name: 'Home', path: '/' },
-    { name: 'Conteúdo Gratuito', path: '/free-content' },
-    { name: 'Agendar Sessão', path: '/schedule-session' },
-    { name: 'Programa de Mentoria', path: '/mentorship-program' },
+    { name: 'Biblioteca', path: '/free-content' },
+    { name: 'Diagnóstico gratuito', path: '/schedule-session' },
+    { name: 'Mentoria', path: '/mentorship-program' },
     { name: 'Admin', path: '/admin' },
   ];
 
@@ -28,7 +28,7 @@ export default function Navigation() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
-            <Link href="/" className="text-2xl font-bold text-[#2563EB]">
+            <Link href="/" className="text-lg sm:text-xl md:text-2xl font-bold text-[#2563EB] leading-tight">
               Programa de Mentoria Método C.O.M.A.V
             </Link>
           </div>

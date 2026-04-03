@@ -29,15 +29,15 @@ export default function AdminPage() {
   // Mock data
   const metrics = [
     { label: 'Total de Usuários', value: '1,247', change: '+12%', icon: '👥' },
-    { label: 'Conteúdos Publicados', value: '9', change: '+3', icon: '📚' },
+    { label: 'Conteúdos Publicados', value: '10', change: '+3', icon: '📚' },
     { label: 'Sessões Agendadas', value: '28', change: '+7', icon: '📅' },
     { label: 'Taxa de Conclusão', value: '78%', change: '+5%', icon: '📊' },
   ];
 
   const [contentItems, setContentItems] = useState<ContentItem[]>([
-    { id: 1, title: 'Introdução ao Lean Manufacturing', type: 'Vídeo', views: 1243, status: 'published' },
-    { id: 2, title: 'Guia Completo de 5S', type: 'E-book', views: 892, status: 'published' },
-    { id: 3, title: 'Novo Curso de Kaizen', type: 'Curso', views: 0, status: 'draft' },
+    { id: 1, title: 'Liderança adaptativa em ambientes voláteis', type: 'Vídeo', views: 1243, status: 'published' },
+    { id: 2, title: 'Guia: conversas difíceis com equipes', type: 'Guia', views: 892, status: 'published' },
+    { id: 3, title: 'Workshop: feedback e cultura', type: 'Curso', views: 0, status: 'draft' },
   ]);
 
   const [sessionRequests, setSessionRequests] = useState<SessionRequest[]>([

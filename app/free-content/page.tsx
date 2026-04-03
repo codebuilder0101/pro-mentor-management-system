@@ -4,12 +4,12 @@ import { useState } from 'react';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 
-type ContentType = 'all' | 'video' | 'ebook' | 'guide';
+type ContentType = 'all' | 'video' | 'ebook' | 'article' | 'tool' | 'guide';
 
 interface ContentItem {
   id: number;
   title: string;
-  type: 'video' | 'ebook' | 'guide';
+  type: 'video' | 'ebook' | 'article' | 'tool' | 'guide';
   duration?: string;
   pages?: number;
   views: number;
@@ -19,75 +19,93 @@ interface ContentItem {
 const contentData: ContentItem[] = [
   {
     id: 1,
-    title: 'Introdução ao Lean Manufacturing',
+    title: 'Liderança adaptativa em ambientes voláteis',
     type: 'video',
-    duration: '25 min',
+    duration: '22 min',
     views: 1243,
-    description: 'Aprenda os princípios básicos da metodologia Lean e como aplicá-los em sua organização.',
+    description:
+      'Como ajustar estilo de liderança e prioridades quando o contexto organizacional muda com frequência.',
   },
   {
     id: 2,
-    title: 'Guia Completo de 5S',
-    type: 'ebook',
-    pages: 45,
+    title: 'Guia: conversas difíceis com equipes e pares',
+    type: 'guide',
+    pages: 14,
     views: 892,
-    description: 'E-book detalhado sobre a implementação do método 5S para organização e eficiência.',
+    description:
+      'Roteiro prático para preparar feedback, expectativas e acordos em situações sensíveis.',
   },
   {
     id: 3,
-    title: 'Mapeamento de Fluxo de Valor (VSM)',
-    type: 'guide',
-    pages: 12,
+    title: 'E-book: pensamento estratégico para quem executa',
+    type: 'ebook',
+    pages: 48,
     views: 756,
-    description: 'Guia prático para criar e analisar mapas de fluxo de valor em processos.',
+    description:
+      'Do operacional ao estratégico: priorização, alinhamento com metas e leitura de cenário.',
   },
   {
     id: 4,
-    title: 'Eliminando Desperdícios: Os 8 Tipos de Muda',
-    type: 'video',
-    duration: '18 min',
+    title: 'Artigo: decisões com dados e bom senso',
+    type: 'article',
+    pages: 8,
     views: 1087,
-    description: 'Identifique e elimine os 8 tipos de desperdícios que reduzem a eficiência.',
+    description:
+      'Como combinar indicadores, contexto e julgamento para decidir com mais clareza.',
   },
   {
     id: 5,
-    title: 'Kanban para Gestão Visual',
-    type: 'ebook',
-    pages: 32,
+    title: 'Template: mapa de stakeholders e influência',
+    type: 'tool',
+    pages: 4,
     views: 654,
-    description: 'Aprenda a implementar sistemas Kanban para controle visual de processos.',
+    description:
+      'Ferramenta para mapear relações, interesses e canais de comunicação em projetos e mudanças.',
   },
   {
     id: 6,
-    title: 'Kaizen: Melhoria Contínua na Prática',
-    type: 'guide',
-    pages: 15,
+    title: 'Gestão de tempo e foco para líderes',
+    type: 'video',
+    duration: '28 min',
     views: 923,
-    description: 'Técnicas e ferramentas para implementar cultura de melhoria contínua.',
+    description:
+      'Agenda, energia e prioridades: reduzindo ruído e aumentando impacto na liderança.',
   },
   {
     id: 7,
-    title: 'Gestão de Pessoas com Lean',
-    type: 'video',
-    duration: '32 min',
+    title: 'Melhoria de processos: onde o Lean entra na prática',
+    type: 'article',
+    pages: 10,
     views: 1156,
-    description: 'Como aplicar princípios Lean na liderança e desenvolvimento de equipes.',
+    description:
+      'Visão introdutória da melhoria contínua e Lean como base de conhecimento — não como único foco.',
   },
   {
     id: 8,
-    title: 'Métricas e KPIs em Processos Lean',
-    type: 'ebook',
-    pages: 28,
+    title: 'Checklist: onboarding e integração de talentos',
+    type: 'tool',
+    pages: 3,
     views: 534,
-    description: 'Defina e acompanhe indicadores-chave para medir sucesso em iniciativas Lean.',
+    description:
+      'Lista para alinhar expectativas, cultura e primeiros resultados em novas contratações.',
   },
   {
     id: 9,
-    title: 'Implementando Lean em Pequenas Empresas',
-    type: 'guide',
-    pages: 18,
+    title: 'Cultura de feedback e desenvolvimento contínuo',
+    type: 'ebook',
+    pages: 36,
     views: 678,
-    description: 'Guia adaptado para implementação de Lean em organizações de pequeno porte.',
+    description:
+      'Estruturas simples para criar rituais de desenvolvimento sem burocratizar a gestão.',
+  },
+  {
+    id: 10,
+    title: 'Transição de carreira: diagnóstico e próximos passos',
+    type: 'video',
+    duration: '19 min',
+    views: 812,
+    description:
+      'Para profissionais em mudança de função ou empresa: como organizar narrativa e plano de ação.',
   },
 ];
 
@@ -103,6 +121,10 @@ export default function FreeContentPage() {
         return '🎥';
       case 'ebook':
         return '📚';
+      case 'article':
+        return '📰';
+      case 'tool':
+        return '🧰';
       case 'guide':
         return '📄';
       default:
@@ -115,7 +137,11 @@ export default function FreeContentPage() {
       case 'video':
         return 'Vídeo';
       case 'ebook':
-        return 'E-book';
+        return 'Livro / e-book';
+      case 'article':
+        return 'Artigo';
+      case 'tool':
+        return 'Ferramenta';
       case 'guide':
         return 'Guia';
       default:
@@ -123,50 +149,69 @@ export default function FreeContentPage() {
     }
   };
 
+  const countBy = (t: ContentType) =>
+    t === 'all' ? contentData.length : contentData.filter((i) => i.type === t).length;
+
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
       <section className="bg-gradient-to-r from-[#2563EB] to-blue-700 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Conteúdo Gratuito</h1>
-          <p className="text-xl text-blue-100">
-            Acesse vídeos, e-books e guias para começar sua jornada
+          <p className="text-blue-100 font-semibold uppercase tracking-wide text-sm mb-2">
+            Programa de Mentoria Método C.O.M.A.V
+          </p>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">Biblioteca de aprendizagem estratégica</h1>
+          <p className="text-xl text-blue-100 max-w-3xl">
+            Um repositório curado de vídeos, artigos, livros e e-books, guias, ferramentas e
+            materiais estratégicos — para apoiar sua evolução profissional e o desenvolvimento
+            organizacional, além da mentoria.
           </p>
         </div>
       </section>
 
-      {/* Content */}
       <section className="py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Filters */}
-          <div className="flex flex-wrap gap-4 mb-8">
-            <Button
-              variant={filter === 'all' ? 'primary' : 'outline'}
-              onClick={() => setFilter('all')}
-            >
-              Todos ({contentData.length})
+          <p className="text-gray-600 mb-8 max-w-3xl">
+            Use os filtros para explorar formatos diferentes. Conteúdos complementares ampliam a base
+            de conhecimento (incluindo temas de excelência operacional quando fizer sentido ao seu
+            contexto).
+          </p>
+
+          <div className="flex flex-wrap gap-3 mb-8">
+            <Button variant={filter === 'all' ? 'primary' : 'outline'} onClick={() => setFilter('all')}>
+              Todos ({countBy('all')})
             </Button>
             <Button
               variant={filter === 'video' ? 'primary' : 'outline'}
               onClick={() => setFilter('video')}
             >
-              🎥 Vídeos ({contentData.filter((i) => i.type === 'video').length})
+              Vídeos ({countBy('video')})
             </Button>
             <Button
               variant={filter === 'ebook' ? 'primary' : 'outline'}
               onClick={() => setFilter('ebook')}
             >
-              📚 E-books ({contentData.filter((i) => i.type === 'ebook').length})
+              Livros / e-books ({countBy('ebook')})
+            </Button>
+            <Button
+              variant={filter === 'article' ? 'primary' : 'outline'}
+              onClick={() => setFilter('article')}
+            >
+              Artigos ({countBy('article')})
+            </Button>
+            <Button
+              variant={filter === 'tool' ? 'primary' : 'outline'}
+              onClick={() => setFilter('tool')}
+            >
+              Ferramentas ({countBy('tool')})
             </Button>
             <Button
               variant={filter === 'guide' ? 'primary' : 'outline'}
               onClick={() => setFilter('guide')}
             >
-              📄 Guias ({contentData.filter((i) => i.type === 'guide').length})
+              Guias ({countBy('guide')})
             </Button>
           </div>
 
-          {/* Content Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
             {filteredContent.map((item) => (
               <Card key={item.id} hover>
@@ -179,27 +224,24 @@ export default function FreeContentPage() {
                 <h3 className="text-xl font-semibold mb-2 text-gray-900">{item.title}</h3>
                 <p className="text-gray-600 text-sm mb-4">{item.description}</p>
                 <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
-                  <span>{item.duration || `${item.pages} páginas`}</span>
+                  <span>{item.duration || `${item.pages} pág.`}</span>
                   <span>{item.views} visualizações</span>
                 </div>
                 <Button variant="primary" className="w-full">
-                  Acessar
+                  Acessar material
                 </Button>
               </Card>
             ))}
           </div>
 
-          {/* CTA Section */}
           <Card className="bg-gradient-to-r from-[#2563EB] to-blue-700 text-white text-center">
-            <h2 className="text-2xl md:text-3xl font-bold mb-4">
-              Quer ir além do conteúdo gratuito?
-            </h2>
+            <h2 className="text-2xl md:text-3xl font-bold mb-4">Quer ir além da biblioteca?</h2>
             <p className="text-lg mb-6 text-blue-100">
-              Junte-se ao nosso programa de mentoria e tenha acesso a acompanhamento
-              personalizado, sessões ao vivo e muito mais.
+              A mentoria Método C.O.M.A.V combina jornada em fases, sessões individuais e em grupo e
+              acompanhamento próximo — com entregáveis alinhados aos seus desafios.
             </p>
             <Button href="/mentorship-program" variant="secondary" size="lg">
-              Conhecer o Programa de Mentoria
+              Conhecer o programa de mentoria
             </Button>
           </Card>
         </div>
