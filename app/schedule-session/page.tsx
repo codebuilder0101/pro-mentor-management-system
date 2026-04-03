@@ -81,13 +81,12 @@ export default function ScheduleSessionPage() {
       <section className="bg-gradient-to-r from-[#2563EB] to-blue-700 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-blue-100 font-semibold uppercase tracking-wide text-sm mb-2">
-            Programa de Mentoria Método C.O.M.A.V
+            Adapte-se para Prosperar
           </p>
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Sessão de diagnóstico gratuita</h1>
           <p className="text-xl text-blue-100 max-w-3xl">
-            Uma primeira conversa para <strong className="text-white">entender seus objetivos</strong>,{' '}
-            <strong className="text-white">mapear desafios</strong> e alinhar expectativas sobre mentoria,
-            palestras ou treinamentos — sem compromisso comercial.
+            Meia hora ou um pouco mais para você contar onde está apertando, o que quer mudar e tirar
+            dúvida sobre mentoria, palestra ou treinamento. Sem vendedor enchendo o saco no final.
           </p>
         </div>
       </section>
@@ -98,10 +97,9 @@ export default function ScheduleSessionPage() {
             <Card>
               <h2 className="text-2xl font-bold mb-4 text-gray-900">O que é esta sessão?</h2>
               <p className="text-gray-600 mb-4">
-                Não é uma aula nem uma consultoria fechada: é um encontro de{' '}
-                <strong>escuta e diagnóstico</strong> para conhecer seu contexto profissional, suas
-                prioridades e o tipo de apoio que faz mais sentido (programa de mentoria, formatos em
-                grupo, palestras ou cursos).
+                Não é palestra gravada nem “fechamento” de pacote. É conversa para entender seu
+                contexto e ver se faz sentido seguir com mentoria, algo em grupo ou formato
+                corporativo.
               </p>
               <ul className="space-y-3 text-gray-600">
                 <li className="flex items-start">

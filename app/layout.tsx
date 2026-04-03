@@ -15,9 +15,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Programa de Mentoria Método C.O.M.A.V",
+  title: "Adapte-se para Prosperar · Mentoria Método C.O.M.A.V",
   description:
-    "Mentoria e aprendizagem profissional para desenvolvimento organizacional: liderança, adaptabilidade, gestão de pessoas, decisão e melhoria de processos.",
+    "Mentoria para líderes e quem ainda não é líder: liderança, gestão de pessoas, desenvolvimento profissional e organizacional. Gustavo Máximo.",
 };
 
 export default function RootLayout({

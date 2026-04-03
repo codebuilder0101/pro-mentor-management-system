@@ -73,12 +73,12 @@ const contentData: ContentItem[] = [
   },
   {
     id: 7,
-    title: 'Melhoria de processos: onde o Lean entra na prática',
+    title: 'Melhoria de processos na prática',
     type: 'article',
     pages: 10,
     views: 1156,
     description:
-      'Visão introdutória da melhoria contínua e Lean como base de conhecimento — não como único foco.',
+      'Texto curto sobre melhoria contínua no dia a dia. Em alguns trechos uso Lean só como referência — um tema entre outros, não o centro do site.',
   },
   {
     id: 8,
@@ -157,13 +157,12 @@ export default function FreeContentPage() {
       <section className="bg-gradient-to-r from-[#2563EB] to-blue-700 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-blue-100 font-semibold uppercase tracking-wide text-sm mb-2">
-            Programa de Mentoria Método C.O.M.A.V
+            Adapte-se para Prosperar
           </p>
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Biblioteca de aprendizagem estratégica</h1>
           <p className="text-xl text-blue-100 max-w-3xl">
-            Um repositório curado de vídeos, artigos, livros e e-books, guias, ferramentas e
-            materiais estratégicos — para apoiar sua evolução profissional e o desenvolvimento
-            organizacional, além da mentoria.
+            Vídeo, artigo, e-book, guia, planilha: material para você estudar no seu ritmo e apoiar
+            decisões no trabalho. Complementa a mentoria — não substitui conversa com o mentor.
           </p>
         </div>
       </section>
@@ -171,9 +170,8 @@ export default function FreeContentPage() {
       <section className="py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-gray-600 mb-8 max-w-3xl">
-            Use os filtros para explorar formatos diferentes. Conteúdos complementares ampliam a base
-            de conhecimento (incluindo temas de excelência operacional quando fizer sentido ao seu
-            contexto).
+            Escolhe o formato no filtro. Tem coisa de liderança, gente, processo — e, em alguns
+            materiais, referência a melhoria contínua quando o tema pede.
           </p>
 
           <div className="flex flex-wrap gap-3 mb-8">
@@ -237,8 +235,8 @@ export default function FreeContentPage() {
           <Card className="bg-gradient-to-r from-[#2563EB] to-blue-700 text-white text-center">
             <h2 className="text-2xl md:text-3xl font-bold mb-4">Quer ir além da biblioteca?</h2>
             <p className="text-lg mb-6 text-blue-100">
-              A mentoria Método C.O.M.A.V combina jornada em fases, sessões individuais e em grupo e
-              acompanhamento próximo — com entregáveis alinhados aos seus desafios.
+              Se quiser ir além do material gravado, o programa de mentoria organiza encontros em
+              fases, individual e em grupo, com acompanhamento mais de perto.
             </p>
             <Button href="/mentorship-program" variant="secondary" size="lg">
               Conhecer o programa de mentoria

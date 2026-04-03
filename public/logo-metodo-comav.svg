@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="220" height="48" viewBox="0 0 220 48" role="img" aria-label="Método C.O.M.A.V">
+  <circle cx="18" cy="24" r="9" fill="#2563eb"/>
+  <circle cx="42" cy="24" r="9" fill="#16a34a"/>
+  <circle cx="66" cy="24" r="9" fill="#ea580c"/>
+  <circle cx="90" cy="24" r="9" fill="#ca8a04"/>
+  <text x="108" y="30" fill="#ffffff" font-family="system-ui, sans-serif" font-size="13" font-weight="700">MÉTODO C.O.M.A.V</text>
+</svg>

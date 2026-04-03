@@ -8,14 +8,14 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
             <h3 className="text-xl font-bold text-white mb-4">Adapte-se para Prosperar</h3>
-            <p className="text-sm">
-              Aprendizagem profissional e mentoria para desenvolvimento organizacional — liderança,
-              adaptabilidade, gestão de pessoas e decisão, com o Método C.O.M.A.V.
+            <p className="text-sm leading-relaxed">
+              Mentoria e conteúdo para desenvolvimento organizacional: liderança, pessoas, decisão e
+              crescimento profissional — com o Método C.O.M.A.V.
             </p>
           </div>
 
           <div>
-            <h4 className="text-lg font-semibold text-white mb-4">Links Rápidos</h4>
+            <h4 className="text-lg font-semibold text-white mb-4">Links rápidos</h4>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link href="/" className="hover:text-white transition-colors">
@@ -24,12 +24,12 @@ export default function Footer() {
               </li>
               <li>
                 <Link href="/free-content" className="hover:text-white transition-colors">
-                  Biblioteca estratégica
+                  Biblioteca
                 </Link>
               </li>
               <li>
                 <Link href="/schedule-session" className="hover:text-white transition-colors">
-                  Sessão de diagnóstico
+                  Diagnóstico gratuito
                 </Link>
               </li>
               <li>
@@ -50,9 +50,12 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm">
-          <p>
-            &copy; {new Date().getFullYear()} Programa de Mentoria Método C.O.M.A.V. Todos os
+        <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm space-y-3">
+          <p className="text-gray-500 text-xs leading-relaxed max-w-2xl mx-auto">
+            Método C.O.M.A.V., criado por Gustavo Máximo, com cocriação de Heber Gondim.
+          </p>
+          <p className="text-gray-400">
+            &copy; {new Date().getFullYear()} Adapte-se para Prosperar · Método C.O.M.A.V. Todos os
             direitos reservados.
           </p>
         </div>

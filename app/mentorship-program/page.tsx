@@ -75,7 +75,8 @@ export default function MentorshipProgramPage() {
       n: 5,
       title: 'Processos e melhoria contínua',
       sessions: 2,
-      focus: 'Excelência operacional e melhoria de processos (incluindo base Lean quando aplicável).',
+      focus:
+        'Excelência operacional e melhoria de processos — às vezes com referências como Lean, quando isso ajuda o seu caso.',
     },
     {
       n: 6,
@@ -137,9 +138,9 @@ export default function MentorshipProgramPage() {
         'A proposta organiza o percurso em seis fases temáticas, totalizando 16 encontros de mentoria — combinando modalidades individuais e em grupo, conforme combinado na adesão. Os temas evoluem do diagnóstico à consolidação com plano de ação.',
     },
     {
-      question: 'O Método C.O.M.A.V substitui temas como Lean?',
+      question: 'O programa é focado em Lean?',
       answer:
-        'O Método C.O.M.A.V é a estrutura da mentoria. Temas de excelência operacional e Lean podem aparecer como parte da base de conhecimento, especialmente em processos e melhoria contínua — sem ser o único foco da identidade do programa.',
+        'Não. O centro é liderança, pessoas, decisão e desenvolvimento organizacional. Se fizer sentido para você, a gente pode passar por melhoria de processos e até usar Lean como referência — mas isso é apoio, não o “carro-chefe” da comunicação.',
     },
     {
       question: 'Posso cancelar minha assinatura?',
@@ -159,10 +160,10 @@ export default function MentorshipProgramPage() {
             Programa de Mentoria — Método C.O.M.A.V
           </h1>
           <p className="text-xl md:text-2xl mb-8 text-blue-100 max-w-3xl mx-auto">
-            Uma jornada estruturada em <strong className="text-white">6 fases</strong> e{' '}
-            <strong className="text-white">16 sessões</strong>, com mentoria individual e em grupo,
-            para desenvolver liderança, adaptabilidade, gestão de pessoas e resultados
-            organizacionais.
+            São <strong className="text-white">6 fases</strong> e{' '}
+            <strong className="text-white">16 encontros</strong>, individuais e em grupo, para você
+            fortalecer liderança, gestão de pessoas, adaptação e leitura estratégica — dentro da
+            empresa ou na carreira.
           </p>
           <Button href="/schedule-session" size="lg" variant="secondary">
             Agendar sessão de diagnóstico gratuita
@@ -183,6 +184,39 @@ export default function MentorshipProgramPage() {
                 <p className="text-gray-600">{feature.description}</p>
               </Card>
             ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="py-16 bg-white border-y border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-center mb-3 text-gray-900">
+            Palestra ou treinamento para o time?
+          </h2>
+          <p className="text-center text-gray-600 mb-10 max-w-2xl mx-auto">
+            Dá para contratar formatos corporativos à parte da mentoria individual. Conta o contexto na
+            sessão de diagnóstico que a gente monta pauta e carga horária.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto">
+            <Card className="flex flex-col border-l-4 border-[#2563EB]">
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Contratar palestra</h3>
+              <p className="text-gray-600 text-sm mb-6 grow">
+                Evento interno, kickoff, convenção. Uma palestra objetiva, alinhada ao tom da sua
+                empresa.
+              </p>
+              <Button href="/schedule-session" variant="primary" className="w-full">
+                Solicitar palestra
+              </Button>
+            </Card>
+            <Card className="flex flex-col border-l-4 border-green-600">
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Contratar curso / treinamento</h3>
+              <p className="text-gray-600 text-sm mb-6 grow">
+                Turma fechada, workshop, trilha em módulos. Foco em competências de liderança e gestão.
+              </p>
+              <Button href="/schedule-session" variant="primary" className="w-full">
+                Solicitar treinamento
+              </Button>
+            </Card>
           </div>
         </div>
       </section>
