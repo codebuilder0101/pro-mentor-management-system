@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import React from 'react';
 
 interface ButtonProps {
@@ -7,6 +8,7 @@ interface ButtonProps {
   onClick?: () => void;
   className?: string;
   type?: 'button' | 'submit' | 'reset';
+  href?: string;
 }
 
 export default function Button({
@@ -16,6 +18,7 @@ export default function Button({
   onClick,
   className = '',
   type = 'button',
+  href,
 }: ButtonProps) {
   const baseStyles = 'font-semibold rounded-lg transition-all duration-200 inline-flex items-center justify-center';
 
@@ -31,12 +34,18 @@ export default function Button({
     lg: 'px-8 py-4 text-lg',
   };
 
+  const mergedClassName = `${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`;
+
+  if (href) {
+    return (
+      <Link href={href} className={mergedClassName} onClick={onClick}>
+        {children}
+      </Link>
+    );
+  }
+
   return (
-    <button
-      type={type}
-      onClick={onClick}
-      className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`}
-    >
+    <button type={type} onClick={onClick} className={mergedClassName}>
       {children}
     </button>
   );

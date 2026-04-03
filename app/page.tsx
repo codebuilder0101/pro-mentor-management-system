@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 
@@ -16,16 +15,17 @@ export default function Home() {
               Domine a Metodologia Enxuta, Melhoria de Processos e Gestão de Pessoas
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/mentorship-program">
-                <Button size="lg" variant="secondary">
-                  Conhecer o Programa
-                </Button>
-              </Link>
-              <Link href="/free-content">
-                <Button size="lg" variant="outline" className="bg-white text-[#2563EB] hover:bg-gray-100">
-                  Conteúdo Gratuito
-                </Button>
-              </Link>
+              <Button href="/mentorship-program" size="lg" variant="secondary">
+                Conhecer o Programa
+              </Button>
+              <Button
+                href="/free-content"
+                size="lg"
+                variant="outline"
+                className="bg-white text-[#2563EB] hover:bg-gray-100"
+              >
+                Conteúdo Gratuito
+              </Button>
             </div>
           </div>
         </div>
@@ -156,16 +156,17 @@ export default function Home() {
             Comece hoje mesmo sua jornada de transformação profissional
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/schedule-session">
-              <Button size="lg" variant="secondary">
-                Agendar Sessão Gratuita
-              </Button>
-            </Link>
-            <Link href="/mentorship-program">
-              <Button size="lg" variant="outline" className="bg-white text-[#2563EB] hover:bg-gray-100">
-                Ver Planos
-              </Button>
-            </Link>
+            <Button href="/schedule-session" size="lg" variant="secondary">
+              Agendar Sessão Gratuita
+            </Button>
+            <Button
+              href="/mentorship-program"
+              size="lg"
+              variant="outline"
+              className="bg-white text-[#2563EB] hover:bg-gray-100"
+            >
+              Ver Planos
+            </Button>
           </div>
         </div>
       </section>

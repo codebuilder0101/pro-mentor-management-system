@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
-import Link from 'next/link';
 
 type ContentType = 'all' | 'video' | 'ebook' | 'guide';
 
@@ -199,11 +198,9 @@ export default function FreeContentPage() {
               Junte-se ao nosso programa de mentoria e tenha acesso a acompanhamento
               personalizado, sessões ao vivo e muito mais.
             </p>
-            <Link href="/mentorship-program">
-              <Button variant="secondary" size="lg">
-                Conhecer o Programa de Mentoria
-              </Button>
-            </Link>
+            <Button href="/mentorship-program" variant="secondary" size="lg">
+              Conhecer o Programa de Mentoria
+            </Button>
           </Card>
         </div>
       </section>

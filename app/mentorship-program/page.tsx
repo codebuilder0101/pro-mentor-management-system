@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
-import Link from 'next/link';
 
 export default function MentorshipProgramPage() {
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
@@ -133,11 +132,9 @@ export default function MentorshipProgramPage() {
             Acelere sua transformação profissional com acompanhamento especializado em
             Metodologia Enxuta, Melhoria de Processos e Gestão de Pessoas
           </p>
-          <Link href="/schedule-session">
-            <Button size="lg" variant="secondary">
-              Agendar Sessão Gratuita
-            </Button>
-          </Link>
+          <Button href="/schedule-session" size="lg" variant="secondary">
+            Agendar Sessão Gratuita
+          </Button>
         </div>
       </section>
 
@@ -230,15 +227,14 @@ export default function MentorshipProgramPage() {
                     </li>
                   ))}
                 </ul>
-                <Link href="/schedule-session">
-                  <Button
-                    variant={tier.highlighted ? 'primary' : 'outline'}
-                    className="w-full"
-                    size="lg"
-                  >
-                    Começar Agora
-                  </Button>
-                </Link>
+                <Button
+                  href="/schedule-session"
+                  variant={tier.highlighted ? 'primary' : 'outline'}
+                  className="w-full"
+                  size="lg"
+                >
+                  Começar Agora
+                </Button>
               </Card>
             ))}
           </div>
@@ -284,11 +280,9 @@ export default function MentorshipProgramPage() {
           <p className="text-xl mb-8 text-blue-100">
             Agende uma sessão gratuita e descubra como o programa pode ajudá-lo
           </p>
-          <Link href="/schedule-session">
-            <Button size="lg" variant="secondary">
-              Agendar Sessão Gratuita
-            </Button>
-          </Link>
+          <Button href="/schedule-session" size="lg" variant="secondary">
+            Agendar Sessão Gratuita
+          </Button>
         </div>
       </section>
     </div>
