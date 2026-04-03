@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Programa de Mentoria em Lean",
+  title: "Programa de Mentoria Método C.O.M.A.V",
   description: "Transformando profissionais através da Metodologia Enxuta, Melhoria de Processos e Gestão de Pessoas",
 };
 

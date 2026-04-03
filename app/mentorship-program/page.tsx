@@ -126,7 +126,7 @@ export default function MentorshipProgramPage() {
       <section className="bg-gradient-to-br from-[#2563EB] to-blue-700 text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-6">
-            Programa de Mentoria em Lean
+            Programa de Mentoria Método C.O.M.A.V
           </h1>
           <p className="text-xl md:text-2xl mb-8 text-blue-100 max-w-3xl mx-auto">
             Acelere sua transformação profissional com acompanhamento especializado em

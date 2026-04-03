@@ -130,7 +130,7 @@ export default function FreeContentPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Conteúdo Gratuito</h1>
           <p className="text-xl text-blue-100">
-            Acesse vídeos, e-books e guias para começar sua jornada Lean
+            Acesse vídeos, e-books e guias para começar sua jornada
           </p>
         </div>
       </section>
