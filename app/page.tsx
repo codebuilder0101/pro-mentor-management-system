@@ -47,7 +47,10 @@ export default function Home() {
               </div>
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-5 leading-tight">
               Olá Gustavo.
-              Por favor, verifique o e-mail que me enviou.
+              Para uma comunicação mais rápida, que tal conversarmos através do WhatsApp?
+Este é o nosso número de WhatsApp:
++81 70-9472-6559
+Por favor, entre em contato conosco pelo WhatsApp.
               </h1>
               <p className="text-lg md:text-xl text-blue-100 mb-3 max-w-xl mx-auto lg:mx-0">
                 Liderança, gestão de pessoas, desenvolvimento profissional, adaptação e visão
