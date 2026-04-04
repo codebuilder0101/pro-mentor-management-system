@@ -124,17 +124,17 @@ export default function MentorshipProgramPage() {
     {
       question: 'O programa é só para quem já é líder?',
       answer:
-        'Não. A jornada atende líderes, futuros líderes, especialistas e profissionais em transição. O foco é desenvolvimento de competências de liderança, adaptação e gestão — em qualquer nível hierárquico.',
+        'Não, a jornada atende líderes, futuros líderes, especialistas e profissionais em transição. O foco é o desenvolvimento de competências de liderança, adaptação e gestão, em qualquer nível hierárquico.',
     },
     {
-      question: 'Como funcionam as 16 sessões e as 6 fases?',
+      question: 'Como funcionam as 16 sessões e as 5 fases?',
       answer:
-        'A proposta organiza o percurso em seis fases temáticas, totalizando 16 encontros de mentoria — combinando modalidades individuais e em grupo, conforme combinado na adesão. Os temas evoluem do diagnóstico à consolidação com plano de ação.',
+        'A proposta organiza o percurso em seis fases temáticas, totalizando 16 encontros de mentoria, combinando modalidades individuais e em grupo conforme o que for definido na adesão. Os temas evoluem do diagnóstico até a consolidação, com um plano de ação.',
     },
     {
       question: 'O programa é focado em Lean?',
       answer:
-        'Não. O centro é liderança, pessoas, decisão e desenvolvimento organizacional. Se fizer sentido para você, a gente pode passar por melhoria de processos e até usar Lean como referência — mas isso é apoio, não o “carro-chefe” da comunicação.',
+        'Não, o centro é liderança, pessoas, decisão e desenvolvimento organizacional. Se fizer sentido para você, podemos passar por melhorias de processos e até usar o Lean como referência, mas isso é um apoio, não o carro-chefe da comunicação.',
     },
     {
       question: 'Posso cancelar minha assinatura?',
