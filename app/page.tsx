@@ -40,13 +40,13 @@ export default function Home() {
                 <Image
                   src="/logo-metodo-comav.svg"
                   alt="Método C.O.M.A.V"
-                  width={220}
+                  width={260}
                   height={48}
                   className="h-10 w-auto opacity-95"
                 />
               </div>
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-5 leading-tight">
-              Mentoria e aprendizado para quem leva gente e resultado a sério
+                Mentoria e aprendizado para quem leva gente e resultado a sério
               </h1>
               <p className="text-lg md:text-xl text-blue-100 mb-3 max-w-xl mx-auto lg:mx-0">
                 Liderança, gestão de pessoas, desenvolvimento profissional, adaptação e visão
@@ -73,7 +73,7 @@ export default function Home() {
             <div className="shrink-0 order-1 lg:order-2">
               <div className="relative w-56 h-56 sm:w-64 sm:h-64 mx-auto rounded-full overflow-hidden ring-4 ring-white/35 shadow-2xl bg-white/10">
                 <Image
-                  src="/image1.png"
+                  src="/image.png"
                   alt="Gustavo Máximo, mentor"
                   width={320}
                   height={320}
@@ -82,7 +82,9 @@ export default function Home() {
                 />
               </div>
               <p className="text-center text-blue-100 mt-4 font-semibold">Gustavo Máximo</p>
-              <p className="text-center text-blue-200/90 text-sm">Professor, mentor e palestrante</p>
+              <p className="text-center text-blue-200/90 text-sm">
+                Executivo, líder, docente, mentor e palestrante
+              </p>
             </div>
           </div>
         </div>
