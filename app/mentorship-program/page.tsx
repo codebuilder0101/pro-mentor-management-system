@@ -336,7 +336,11 @@ export default function MentorshipProgramPage() {
                       {activeFaq === index ? '−' : '+'}
                     </span>
                   </div>
-                  {activeFaq === index && <p className="mt-4 text-gray-600">{faq.answer}</p>}
+                  {activeFaq === index && (
+                    <p className="mt-4 mx-4 mx-auto text-gray-600 text-justify">
+                      {faq.answer}
+                    </p>
+                  )}
                 </Card>
               </div>
             ))}
