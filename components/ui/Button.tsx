@@ -9,6 +9,7 @@ interface ButtonProps {
   className?: string;
   type?: 'button' | 'submit' | 'reset';
   href?: string;
+  disabled?: boolean;
 }
 
 export default function Button({
@@ -19,6 +20,7 @@ export default function Button({
   className = '',
   type = 'button',
   href,
+  disabled = false,
 }: ButtonProps) {
   const baseStyles = 'font-semibold rounded-lg transition-all duration-200 inline-flex items-center justify-center';
 
@@ -34,18 +36,19 @@ export default function Button({
     lg: 'px-8 py-4 text-lg',
   };
 
-  const mergedClassName = `${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`;
+  const disabledClass = disabled ? ' opacity-60 pointer-events-none cursor-not-allowed' : '';
+  const mergedClassName = `${baseStyles} ${variants[variant]} ${sizes[size]}${disabledClass} ${className}`;
 
   if (href) {
     return (
-      <Link href={href} className={mergedClassName} onClick={onClick}>
+      <Link href={href} className={mergedClassName} onClick={onClick} aria-disabled={disabled}>
         {children}
       </Link>
     );
   }
 
   return (
-    <button type={type} onClick={onClick} className={mergedClassName}>
+    <button type={type} onClick={onClick} className={mergedClassName} disabled={disabled}>
       {children}
     </button>
   );

@@ -14,6 +14,12 @@ export default function ScheduleSessionPage() {
     message: '',
   });
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [scheduleResult, setScheduleResult] = useState<{
+    htmlLink: string;
+    meetLink: string | null;
+  } | null>(null);
 
   const timeSlots = [
     '09:00',
@@ -34,10 +40,50 @@ export default function ScheduleSessionPage() {
     });
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    console.log('Session request:', formData);
-    setSubmitted(true);
+    setSubmitError(null);
+    setSubmitting(true);
+    try {
+      const res = await fetch('/api/schedule', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          preferredDate: formData.date,
+          preferredTime: formData.time,
+          context: formData.message,
+        }),
+      });
+      const data = (await res.json()) as {
+        ok?: boolean;
+        error?: string;
+        details?: string[];
+        htmlLink?: string;
+        meetLink?: string | null;
+      };
+
+      if (!res.ok || !data.ok) {
+        const detail =
+          Array.isArray(data.details) && data.details.length > 0
+            ? ` ${data.details.join(' ')}`
+            : '';
+        setSubmitError((data.error ?? 'Não foi possível enviar o pedido.') + detail);
+        return;
+      }
+
+      setScheduleResult({
+        htmlLink: data.htmlLink ?? '',
+        meetLink: data.meetLink ?? null,
+      });
+      setSubmitted(true);
+    } catch {
+      setSubmitError('Falha de rede. Verifique sua conexão e tente novamente.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   if (submitted) {
@@ -51,13 +97,44 @@ export default function ScheduleSessionPage() {
               Recebemos seu pedido de agendamento da sessão de entendimento para{' '}
               <strong>{formData.date}</strong> às <strong>{formData.time}</strong>.
             </p>
-            <p className="text-gray-600 mb-8">
-              Entraremos em contato pelo email <strong>{formData.email}</strong> ou telefone{' '}
-              <strong>{formData.phone}</strong> para confirmar o horário e enviar o link da reunião.
+            <p className="text-gray-600 mb-4">
+              Um convite foi enviado para <strong>{formData.email}</strong> com a data e o horário
+              solicitados. Confira também a pasta de spam.
             </p>
+            {scheduleResult?.htmlLink ? (
+              <p className="text-gray-600 mb-2">
+                <a
+                  href={scheduleResult.htmlLink}
+                  className="text-[#2563EB] font-medium underline hover:no-underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Abrir evento no Google Calendar
+                </a>
+              </p>
+            ) : null}
+            {scheduleResult?.meetLink ? (
+              <p className="text-gray-600 mb-8">
+                <a
+                  href={scheduleResult.meetLink}
+                  className="text-[#2563EB] font-medium underline hover:no-underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Link do Google Meet
+                </a>
+              </p>
+            ) : (
+              <p className="text-gray-600 mb-8">
+                O link da videoconferência virá no convite por email. Se precisarmos ajustar o horário,
+                entraremos em contato pelo telefone <strong>{formData.phone}</strong>.
+              </p>
+            )}
             <Button
               onClick={() => {
                 setSubmitted(false);
+                setScheduleResult(null);
+                setSubmitError(null);
                 setFormData({
                   name: '',
                   email: '',
@@ -147,6 +224,14 @@ export default function ScheduleSessionPage() {
           <Card>
             <h2 className="text-2xl font-bold mb-6 text-gray-900">Agendar conversa</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
+              {submitError ? (
+                <div
+                  className="rounded-lg bg-red-50 border border-red-200 text-red-800 px-4 py-3 text-sm"
+                  role="alert"
+                >
+                  {submitError}
+                </div>
+              ) : null}
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
                   Nome completo *
@@ -249,8 +334,8 @@ export default function ScheduleSessionPage() {
                 />
               </div>
 
-              <Button type="submit" size="lg" className="w-full">
-                Enviar pedido de agendamento
+              <Button type="submit" size="lg" className="w-full" disabled={submitting}>
+                {submitting ? 'Enviando…' : 'Enviar pedido de agendamento'}
               </Button>
             </form>
           </Card>
