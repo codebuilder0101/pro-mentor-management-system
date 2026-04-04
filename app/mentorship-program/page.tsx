@@ -49,41 +49,35 @@ export default function MentorshipProgramPage() {
   const phases = [
     {
       n: 1,
-      title: 'Contexto e propósito',
-      sessions: 3,
-      focus: 'Diagnóstico de cenário, objetivos e prioridades profissionais.',
+      title: 'Consciência, Diagnóstico e Direcionamento',
+      sessions: 4,
+      focus: 'Diagnóstico Inicial, Contrato de Jornada, Visão de Futuro e Diagnóstico Psicológico-Operacional, Direção - Âncoras de Carreira, Visualização Estratégica,  Base Pessoal - Valores, Energia, Crenças e Sacrifícios',
     },
     {
       n: 2,
-      title: 'Liderança e influência',
-      sessions: 3,
-      focus: 'Postura de liderança, adaptação e relação com equipes e stakeholders.',
+      title: 'Autoliderança e Gestão Pessoal',
+      sessions: 2,
+      focus: 'Autogestão, Compromisso de Execução, Organização, Prioridade e Entrada no COMAV',
     },
     {
       n: 3,
-      title: 'Gestão de pessoas e comunicação',
-      sessions: 3,
-      focus: 'Feedback, desenvolvimento, conversas difíceis e cultura de performance.',
+      title: 'Liderança, Relações e Gestão de Pessoas, Direcionamento de Carreira e Posicionamento',
+      sessions: 4,
+      focus: 'Influência, Carisma, Conexões, Confiança, Reputação e Promoção Estratégica, Gestão de Pessoas, Performance, Carreira Y, Escolhas e Poder Profissional',
     },
     {
       n: 4,
-      title: 'Decisão, priorização e estratégia',
+      title: 'Execução, Alta Performance e Impacto',
       sessions: 3,
-      focus: 'Clareza de decisões, alinhamento com estratégia e gestão do tempo e foco.',
+      focus: 'Estratégia, Informação, Resultado com Consciência,  Excelência, Capricho, Comunicação Executiva, Liderança Aplicada e Caráter',
     },
     {
       n: 5,
-      title: 'Processos e melhoria contínua',
-      sessions: 2,
+      title: 'Consolidação, Sustentabilidade e Entregáveis',
+      sessions: 3,
       focus:
-        'Excelência operacional e melhoria de processos — às vezes com referências como Lean, quando isso ajuda o seu caso.',
-    },
-    {
-      n: 6,
-      title: 'Consolidação e plano de ação',
-      sessions: 2,
-      focus: 'Síntese da jornada, métricas de acompanhamento e próximos passos sustentáveis.',
-    },
+        'Inteligência Organizacional, Emoção sob Pressão, Planejamento Tático, Construção de Time, Encerramento, Consolidação e Certificação',
+    }
   ];
 
   const expectedOutcomes = [
@@ -227,7 +221,7 @@ export default function MentorshipProgramPage() {
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-900">
-            A jornada em 6 fases
+            A jornada em 5 fases
           </h2>
           <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
             Visão simplificada do percurso. A distribuição exata das 16 sessões entre fases e
