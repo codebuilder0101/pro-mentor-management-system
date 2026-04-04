@@ -129,7 +129,7 @@ export default function MentorshipProgramPage() {
     {
       question: 'Como funcionam as 16 sessões e as 5 fases?',
       answer:
-        'A proposta organiza o percurso em seis fases temáticas, totalizando 16 encontros de mentoria, combinando modalidades individuais e em grupo conforme o que for definido na adesão. Os temas evoluem do diagnóstico até a consolidação, com um plano de ação.',
+        'A proposta organiza o percurso em cinco fases temáticas, totalizando 16 encontros de mentoria, combinando modalidades individuais e em grupo conforme o que for definido na adesão. Os temas evoluem do diagnóstico até a consolidação, com um plano de ação.',
     },
     {
       question: 'O programa é focado em Lean?',
