@@ -46,7 +46,8 @@ export default function Home() {
                 />
               </div>
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-5 leading-tight">
-                Mentoria e aprendizado para quem leva gente e resultado a sério
+              Olá Gustavo.
+              Por favor, verifique o e-mail que me enviou.
               </h1>
               <p className="text-lg md:text-xl text-blue-100 mb-3 max-w-xl mx-auto lg:mx-0">
                 Liderança, gestão de pessoas, desenvolvimento profissional, adaptação e visão
