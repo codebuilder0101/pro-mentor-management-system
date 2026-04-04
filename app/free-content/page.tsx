@@ -155,24 +155,20 @@ export default function FreeContentPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <section className="bg-gradient-to-r from-[#2563EB] to-blue-700 text-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <p className="text-blue-100 font-semibold uppercase tracking-wide text-sm mb-2">
             Adapte-se para Prosperar
           </p>
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Biblioteca de aprendizagem estratégica</h1>
-          <p className="text-xl text-blue-100 max-w-3xl">
+          <p className="text-xl text-blue-100 max-w-3xl mx-auto text-justify">
             Vídeo, artigo, e-book, guia, planilha: material para você estudar no seu ritmo e apoiar
-            decisões no trabalho. Complementa a mentoria — não substitui conversa com o mentor.
+            decisões no trabalho. Complementa a mentoria, não substitui conversa com o mentor.
           </p>
         </div>
       </section>
 
       <section className="py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-gray-600 mb-8 max-w-3xl">
-            Escolhe o formato no filtro. Tem coisa de liderança, gente, processo — e, em alguns
-            materiais, referência a melhoria contínua quando o tema pede.
-          </p>
 
           <div className="flex flex-wrap gap-3 mb-8">
             <Button variant={filter === 'all' ? 'primary' : 'outline'} onClick={() => setFilter('all')}>

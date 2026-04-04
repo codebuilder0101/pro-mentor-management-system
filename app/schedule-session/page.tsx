@@ -79,12 +79,12 @@ export default function ScheduleSessionPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <section className="bg-gradient-to-r from-[#2563EB] to-blue-700 text-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <p className="text-blue-100 font-semibold uppercase tracking-wide text-sm mb-2">
             Adapte-se para Prosperar
           </p>
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Sessão de diagnóstico gratuita</h1>
-          <p className="text-xl text-blue-100 max-w-3xl">
+          <p className="text-xl text-blue-100 max-w-3xl mx-auto text-justify">
             Meia hora ou um pouco mais para você contar onde está apertando, o que quer mudar e tirar
             dúvida sobre mentoria, palestra ou treinamento. Sem vendedor enchendo o saco no final.
           </p>
@@ -96,7 +96,7 @@ export default function ScheduleSessionPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
             <Card>
               <h2 className="text-2xl font-bold mb-4 text-gray-900">O que é esta sessão?</h2>
-              <p className="text-gray-600 mb-4">
+              <p className="text-gray-600 mb-4 text-justify">
                 Não é palestra gravada nem “fechamento” de pacote. É conversa para entender seu
                 contexto e ver se faz sentido seguir com mentoria, algo em grupo ou formato
                 corporativo.

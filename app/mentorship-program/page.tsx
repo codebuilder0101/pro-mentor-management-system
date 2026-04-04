@@ -157,13 +157,16 @@ export default function MentorshipProgramPage() {
             Adapte-se para Prosperar
           </p>
           <h1 className="text-4xl md:text-6xl font-bold mb-6">
-            Programa de Mentoria — Método C.O.M.A.V
+            Programa de Mentoria<br />Método C.O.M.A.V
           </h1>
-          <p className="text-xl md:text-2xl mb-8 text-blue-100 max-w-3xl mx-auto">
-            São <strong className="text-white">6 fases</strong> e{' '}
-            <strong className="text-white">16 encontros</strong>, individuais e em grupo, para você
-            fortalecer liderança, gestão de pessoas, adaptação e leitura estratégica — dentro da
-            empresa ou na carreira.
+          <p className="text-xl md:text-2xl mb-8 text-blue-100 max-w-3xl mx-auto text-justify">
+            Nosso programa é estruturado em <strong className="text-white">5 fases</strong> e{' '}
+            <strong className="text-white">16 encontros</strong>, realizados de forma individual ou em
+            grupo, para desenvolver competências essenciais de liderança, gestão de pessoas, adaptação e
+            leitura estratégica. Você aprenderá a lidar com contextos adversos e situações de pressão,
+            fortalecendo sua capacidade de tomar decisões assertivas e conduzir equipes com confiança.
+            Cada etapa foi pensada para ampliar sua visão organizacional e impulsionar sua carreira rumo a
+            novos patamares.
           </p>
           <Button href="/schedule-session" size="lg" variant="secondary">
             Agendar sessão de diagnóstico gratuita

@@ -48,13 +48,10 @@ export default function Home() {
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-5 leading-tight">
                 Mentoria e aprendizado para quem leva gente e resultado a sério
               </h1>
-              <p className="text-lg md:text-xl text-blue-100 mb-3 max-w-xl mx-auto lg:mx-0">
+              <p className="text-lg md:text-xl text-blue-100 mb-3 max-w-xl mx-auto lg:mx-0 text-justify">
                 Liderança, gestão de pessoas, desenvolvimento profissional, adaptação e visão
-                estratégica — dentro da empresa ou na sua carreira. Para quem manda e para quem ainda
+                estratégica, dentro da empresa ou na sua carreira. Para quem manda e para quem ainda
                 não manda, mas precisa influenciar e crescer.
-              </p>
-              <p className="text-sm text-blue-200/90 mb-8 max-w-xl mx-auto lg:mx-0">
-                Liderança situacional · Gestão estratégica · Estratégia, pessoas e resultados
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                 <Button href="/mentorship-program" size="lg" variant="secondary">
@@ -83,7 +80,7 @@ export default function Home() {
               </div>
               <p className="text-center text-blue-100 mt-4 font-semibold">Gustavo Máximo</p>
               <p className="text-center text-blue-200/90 text-sm">
-                Executivo, líder, docente, mentor e palestrante
+              Liderança Situacional · Gestão Estratégica · Pessoas · Método · Resultados
               </p>
             </div>
           </div>
@@ -93,15 +90,15 @@ export default function Home() {
       <section className="py-14 bg-white border-b border-gray-100">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center lg:text-left">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Sobre o mentor</h2>
-          <p className="text-gray-600 leading-relaxed mb-3">
+          <p className="text-gray-600 leading-relaxed mb-3 text-justify">
             Gustavo Máximo conduz a mentoria com pé no chão: combina formação acadêmica com experiência
             de mercado. O foco não é “empilhar conceitos”, é você sair dos encontros com clareza para
             decidir melhor, conversar melhor com pessoas e fazer a organização andar.
           </p>
-          <p className="text-gray-600 leading-relaxed">
-            O fio condutor é o <strong className="text-gray-800">Método C.O.M.A.V</strong> — uma
-            jornada pensada para desenvolvimento humano e resultados, sem reduzir tudo a um único
-            slogan de moda.
+          <p className="text-gray-600 leading-relaxed text-justify">
+            O fio condutor é o <strong className="text-gray-800">Método C.O.M.A.V</strong>, uma jornada
+            pensada para desenvolvimento humano e resultados, sem reduzir tudo a um único slogan de
+            moda.
           </p>
         </div>
       </section>
