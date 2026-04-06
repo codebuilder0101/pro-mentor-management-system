@@ -6,8 +6,6 @@ import Button from '@/components/ui/Button';
 import type { LibraryContentType, LibraryItem, LibraryStatus } from '@/lib/library-types';
 import { centsToReaisField, formatPriceBRL, parseReaisToCents } from '@/lib/format-price';
 
-const STORAGE_KEY = 'library_admin_secret';
-
 const TYPES: LibraryContentType[] = ['video', 'ebook', 'article', 'tool', 'guide'];
 const STATUSES: LibraryStatus[] = ['published', 'draft'];
 
@@ -63,7 +61,6 @@ function itemToForm(item: LibraryItem): FormState {
 }
 
 export default function LibraryContentManager() {
-  const [secret, setSecret] = useState('');
   const [items, setItems] = useState<LibraryItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -72,13 +69,11 @@ export default function LibraryContentManager() {
   const [form, setForm] = useState<FormState>(() => emptyForm());
   const [saving, setSaving] = useState(false);
 
-  const loadItems = useCallback(async (adminSecret: string) => {
+  const loadItems = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch('/api/admin/library', {
-        headers: { 'x-admin-secret': adminSecret },
-      });
+      const res = await fetch('/api/admin/library');
       const json = (await res.json()) as { ok?: boolean; items?: LibraryItem[]; error?: string };
       if (!res.ok || !json.ok) {
         throw new Error(json.error || 'Falha ao listar.');
@@ -93,30 +88,8 @@ export default function LibraryContentManager() {
   }, []);
 
   useEffect(() => {
-    try {
-      const s = sessionStorage.getItem(STORAGE_KEY);
-      if (s) {
-        setSecret(s);
-        loadItems(s);
-      }
-    } catch {
-      /* ignore */
-    }
+    void loadItems();
   }, [loadItems]);
-
-  const connect = () => {
-    const trimmed = secret.trim();
-    if (!trimmed) {
-      setError('Informe a chave administrativa.');
-      return;
-    }
-    try {
-      sessionStorage.setItem(STORAGE_KEY, trimmed);
-    } catch {
-      /* ignore */
-    }
-    loadItems(trimmed);
-  };
 
   const openEdit = (item: LibraryItem) => {
     setEditingId(item.id);
@@ -143,11 +116,6 @@ export default function LibraryContentManager() {
   };
 
   const submitForm = async () => {
-    const adminSecret = secret.trim();
-    if (!adminSecret) {
-      setError('Informe a chave administrativa.');
-      return;
-    }
     if (!form.title.trim()) {
       setError('Título é obrigatório.');
       return;
@@ -190,7 +158,6 @@ export default function LibraryContentManager() {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          'x-admin-secret': adminSecret,
         },
         body: JSON.stringify(payload),
       });
@@ -198,7 +165,7 @@ export default function LibraryContentManager() {
       if (!res.ok || !json.ok) throw new Error(json.error || 'Erro ao atualizar.');
 
       closeModal();
-      await loadItems(adminSecret);
+      await loadItems();
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Erro ao salvar.');
     } finally {
@@ -208,21 +175,15 @@ export default function LibraryContentManager() {
 
   const remove = async (id: string) => {
     if (!confirm('Excluir este conteúdo?')) return;
-    const adminSecret = secret.trim();
-    if (!adminSecret) {
-      setError('Informe a chave administrativa.');
-      return;
-    }
     setLoading(true);
     setError(null);
     try {
       const res = await fetch(`/api/admin/library/${id}`, {
         method: 'DELETE',
-        headers: { 'x-admin-secret': adminSecret },
       });
       const json = (await res.json()) as { ok?: boolean; error?: string };
       if (!res.ok || !json.ok) throw new Error(json.error || 'Erro ao excluir.');
-      await loadItems(adminSecret);
+      await loadItems();
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Erro ao excluir.');
     } finally {
@@ -262,8 +223,7 @@ export default function LibraryContentManager() {
         {!loading && items.length === 0 && (
           <div className="py-10 px-4 text-center">
             <p className="text-gray-600 mb-6 max-w-md mx-auto">
-              Nenhum material cadastrado. Conecte com a chave acima e use o botão para adicionar vídeos
-              ou documentos à biblioteca.
+              Nenhum material cadastrado. Use o botão para adicionar vídeos ou documentos à biblioteca.
             </p>
             <Button href="/admin/library/new" variant="primary" size="lg">
               Inserir material

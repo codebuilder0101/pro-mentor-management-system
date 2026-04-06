@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Card from '@/components/ui/Card';
-import Button from '@/components/ui/Button';
+import AdminMediaSection from '@/components/admin/AdminMediaSection';
 
 type TabType = 'overview' | 'content' | 'sessions';
 
@@ -186,55 +186,7 @@ export default function AdminPage() {
           )}
 
           {/* Content Tab */}
-          {activeTab === 'content' && (
-            <div>
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">Gerenciar Conteúdos</h2>
-                <Button onClick={() => console.log('Add content')}>+ Novo Conteúdo</Button>
-              </div>
-              <Card>
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b">
-                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Título</th>
-                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Tipo</th>
-                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Views</th>
-                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Status</th>
-                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Ações</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {contentItems.map((item) => (
-                        <tr key={item.id} className="border-b hover:bg-gray-50">
-                          <td className="py-3 px-4">{item.title}</td>
-                          <td className="py-3 px-4">{item.type}</td>
-                          <td className="py-3 px-4">{item.views}</td>
-                          <td className="py-3 px-4">
-                            <span
-                              className={`px-2 py-1 rounded-full text-xs font-semibold ${getStatusBadge(
-                                item.status
-                              )}`}
-                            >
-                              {getStatusLabel(item.status)}
-                            </span>
-                          </td>
-                          <td className="py-3 px-4">
-                            <button className="text-[#2563EB] hover:underline text-sm mr-3">
-                              Editar
-                            </button>
-                            <button className="text-red-600 hover:underline text-sm">
-                              Excluir
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </Card>
-            </div>
-          )}
+          {activeTab === 'content' && <AdminMediaSection />}
 
           {/* Sessions Tab */}
           {activeTab === 'sessions' && (

@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import { requireLibraryAdmin } from '@/lib/admin-library-auth';
 import { createServiceRoleClient } from '@/lib/supabase/admin';
 import type { LibraryContentType, LibraryItemInsert, LibraryStatus } from '@/lib/library-types';
 
@@ -94,10 +93,7 @@ function parseInsert(body: unknown): LibraryItemInsert | null {
   };
 }
 
-export async function GET(request: Request) {
-  const denied = requireLibraryAdmin(request);
-  if (denied) return denied;
-
+export async function GET() {
   try {
     const supabase = createServiceRoleClient();
     const { data, error } = await supabase
@@ -115,9 +111,6 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const denied = requireLibraryAdmin(request);
-  if (denied) return denied;
-
   let json: unknown;
   try {
     json = await request.json();

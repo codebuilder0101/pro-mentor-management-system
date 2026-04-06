@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -8,8 +8,6 @@ import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import type { LibraryContentType, LibraryStatus } from '@/lib/library-types';
 import { formatPriceBRL, parseReaisToCents } from '@/lib/format-price';
-
-const STORAGE_KEY = 'library_admin_secret';
 
 const TYPES: LibraryContentType[] = ['video', 'ebook', 'article', 'tool', 'guide'];
 const STATUSES: LibraryStatus[] = ['published', 'draft'];
@@ -34,11 +32,6 @@ export default function NewLibraryItemPage() {
   const [uploadingCover, setUploadingCover] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  /** Synced with sessionStorage after mount; used for x-admin-secret on this page. */
-  const [secretDraft, setSecretDraft] = useState('');
-  /** Until effect runs, avoid flashing the password field for users who already connected. */
-  const [showSecretField, setShowSecretField] = useState(false);
-
   const [title, setTitle] = useState('');
   const [type, setType] = useState<LibraryContentType>('video');
   const [intro, setIntro] = useState('');
@@ -51,45 +44,6 @@ export default function NewLibraryItemPage() {
   const [is_free, setIsFree] = useState(true);
   const [price_reais, setPriceReais] = useState('');
   const [status, setStatus] = useState<LibraryStatus>('published');
-
-  useEffect(() => {
-    try {
-      const stored = sessionStorage.getItem(STORAGE_KEY)?.trim();
-      if (stored) {
-        setSecretDraft(stored);
-        setShowSecretField(false);
-      } else {
-        setShowSecretField(true);
-      }
-    } catch {
-      setShowSecretField(true);
-    }
-  }, []);
-
-  /** Prefer sessionStorage (e.g. after Admin → Conteúdos), then typed draft — works before useEffect runs. */
-  function effectiveSecret(): string | null {
-    if (typeof window !== 'undefined') {
-      try {
-        const fromStore = sessionStorage.getItem(STORAGE_KEY)?.trim();
-        if (fromStore) return fromStore;
-      } catch {
-        /* ignore */
-      }
-    }
-    return secretDraft.trim() || null;
-  }
-
-  function persistSecretToSession() {
-    const s = effectiveSecret();
-    if (!s) return;
-    try {
-      sessionStorage.setItem(STORAGE_KEY, s);
-    } catch {
-      /* ignore */
-    }
-    setSecretDraft(s);
-    setShowSecretField(false);
-  }
 
   async function handleCoverFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -107,20 +61,12 @@ export default function NewLibraryItemPage() {
       return;
     }
 
-    const adminSecret = effectiveSecret();
-    if (!adminSecret) {
-      setError('Informe a chave administrativa (campo no topo do formulário) para enviar a capa.');
-      e.target.value = '';
-      return;
-    }
-
     setUploadingCover(true);
     try {
       const fd = new FormData();
       fd.append('file', file);
       const res = await fetch('/api/admin/library/upload', {
         method: 'POST',
-        headers: { 'x-admin-secret': adminSecret },
         body: fd,
       });
       const json = (await res.json()) as { ok?: boolean; url?: string; error?: string };
@@ -128,7 +74,6 @@ export default function NewLibraryItemPage() {
         throw new Error(json.error || 'Falha no upload da imagem.');
       }
       setPreviewImageUrl(json.url);
-      persistSecretToSession();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro no upload.');
     } finally {
@@ -144,11 +89,6 @@ export default function NewLibraryItemPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const adminSecret = effectiveSecret();
-    if (!adminSecret) {
-      setError('Informe a chave administrativa no campo abaixo (mesma variável LIBRARY_ADMIN_SECRET no servidor).');
-      return;
-    }
     if (!title.trim()) {
       setError('Título é obrigatório.');
       return;
@@ -175,7 +115,6 @@ export default function NewLibraryItemPage() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-admin-secret': adminSecret,
         },
         body: JSON.stringify({
           title: title.trim(),
@@ -195,7 +134,6 @@ export default function NewLibraryItemPage() {
       });
       const json = (await res.json()) as { ok?: boolean; error?: string };
       if (!res.ok || !json.ok) throw new Error(json.error || 'Erro ao criar.');
-      persistSecretToSession();
       router.push('/admin');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao salvar.');
@@ -228,27 +166,6 @@ export default function NewLibraryItemPage() {
               {error && (
                 <div className="rounded-lg border border-red-200 bg-red-50 text-red-800 px-4 py-3">
                   {error}
-                </div>
-              )}
-
-              {showSecretField && (
-                <div>
-                  <label className="block font-medium text-gray-700 mb-1">Chave administrativa</label>
-                  <input
-                    type="password"
-                    autoComplete="off"
-                    value={secretDraft}
-                    onChange={(e) => setSecretDraft(e.target.value)}
-                    placeholder="Mesma variável LIBRARY_ADMIN_SECRET"
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">
-                    Ou conecte em{' '}
-                    <Link href="/admin" className="text-[#2563EB] underline">
-                      Admin → Conteúdos
-                    </Link>{' '}
-                    para guardar a chave neste navegador.
-                  </p>
                 </div>
               )}
 

@@ -1,6 +1,5 @@
 import { randomUUID } from 'crypto';
 import { NextResponse } from 'next/server';
-import { requireLibraryAdmin } from '@/lib/admin-library-auth';
 import { createServiceRoleClient } from '@/lib/supabase/admin';
 
 export const runtime = 'nodejs';
@@ -9,9 +8,6 @@ const MAX_BYTES = 5 * 1024 * 1024;
 const ALLOWED_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif']);
 
 export async function POST(request: Request) {
-  const denied = requireLibraryAdmin(request);
-  if (denied) return denied;
-
   const contentType = request.headers.get('content-type') || '';
   if (!contentType.includes('multipart/form-data')) {
     return NextResponse.json({ ok: false, error: 'Use multipart/form-data.' }, { status: 400 });

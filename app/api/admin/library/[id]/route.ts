@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import { requireLibraryAdmin } from '@/lib/admin-library-auth';
 import { createServiceRoleClient } from '@/lib/supabase/admin';
 import type { LibraryContentType, LibraryItemUpdate, LibraryStatus } from '@/lib/library-types';
 
@@ -102,10 +101,7 @@ function parsePatch(body: unknown): LibraryItemUpdate | null {
 
 type RouteContext = { params: Promise<{ id: string }> };
 
-export async function GET(request: Request, context: RouteContext) {
-  const denied = requireLibraryAdmin(request);
-  if (denied) return denied;
-
+export async function GET(_request: Request, context: RouteContext) {
   const { id } = await context.params;
   if (!id) {
     return NextResponse.json({ ok: false, error: 'ID ausente.' }, { status: 400 });
@@ -128,9 +124,6 @@ export async function GET(request: Request, context: RouteContext) {
 }
 
 export async function PATCH(request: Request, context: RouteContext) {
-  const denied = requireLibraryAdmin(request);
-  if (denied) return denied;
-
   const { id } = await context.params;
   if (!id) {
     return NextResponse.json({ ok: false, error: 'ID ausente.' }, { status: 400 });
@@ -172,10 +165,7 @@ export async function PATCH(request: Request, context: RouteContext) {
   }
 }
 
-export async function DELETE(request: Request, context: RouteContext) {
-  const denied = requireLibraryAdmin(request);
-  if (denied) return denied;
-
+export async function DELETE(_request: Request, context: RouteContext) {
   const { id } = await context.params;
   if (!id) {
     return NextResponse.json({ ok: false, error: 'ID ausente.' }, { status: 400 });
