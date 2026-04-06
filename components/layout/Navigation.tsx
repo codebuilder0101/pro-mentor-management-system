@@ -9,7 +9,7 @@ export default function Navigation() {
   const pathname = usePathname();
 
   const navItems = [
-    { name: 'Home', path: '/' },
+    { name: 'Quem somos', path: '/quem-somos' },
     { name: 'Biblioteca', path: '/free-content' },
     { name: 'Diagnóstico gratuito', path: '/schedule-session' },
     { name: 'Mentoria', path: '/mentorship-program' },
