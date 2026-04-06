@@ -10,7 +10,7 @@ export default function Footer() {
             <h3 className="text-xl font-bold text-white mb-4">Adapte-se para Prosperar</h3>
             <p className="text-sm leading-relaxed">
               Mentoria e conteúdo para desenvolvimento organizacional: liderança, pessoas, decisão e
-              crescimento profissional — com o Método C.O.M.A.V.
+              crescimento profissional — com o Método C.O.M.A.V
             </p>
           </div>
 
