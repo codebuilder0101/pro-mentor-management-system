@@ -43,9 +43,9 @@ export default function Footer() {
           <div>
             <h4 className="text-lg font-semibold text-white mb-4">Contato</h4>
             <ul className="space-y-2 text-sm">
-              <li>Email: contato@leanmentor.com.br</li>
-              <li>Telefone: (11) 9999-9999</li>
-              <li>LinkedIn: /leanmentor</li>
+              <li>Email: gustavomaximo_@outlook.com</li>
+              <li>Telefone: +55 98 9 9233-6612</li>
+              <li>LinkedIn: https://www.linkedin.com/in/gustavo-máximo-a499781b0</li>
             </ul>
           </div>
         </div>
