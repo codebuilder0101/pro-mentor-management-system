@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import type { Metadata } from 'next';
 import Card from '@/components/ui/Card';
-import Button from '@/components/ui/Button';
+import CatalogPayCheckout from '@/components/free-content/CatalogPayCheckout';
 import { formatPriceBRL } from '@/lib/format-price';
 import { getCatalogDocumentById, getCatalogVideoById } from '@/lib/supabase/server';
 
@@ -85,50 +85,12 @@ export default async function CatalogPayPage({ params }: Props) {
               </p>
             </div>
 
-            <div className="px-6 py-8 sm:px-8 space-y-6 text-[15px] text-gray-600 leading-relaxed">
-              <div className="rounded-xl border border-amber-200/80 bg-amber-50/90 px-4 py-3.5 text-amber-950 text-sm">
-                <p className="font-semibold text-amber-900 mb-1">Checkout em configuração</p>
-                <p>
-                  O pagamento seguro via Stripe será ativado em breve. Esta página já centraliza o fluxo:
-                  daqui será criada a sessão de pagamento e, só após o webhook confirmar sucesso, o
-                  acesso será concedido.
-                </p>
-              </div>
-
-              <ul className="space-y-2.5 text-sm text-gray-600">
-                <li className="flex gap-2">
-                  <span className="text-emerald-600 font-bold shrink-0">✓</span>
-                  <span>Visualização apenas no leitor protegido da plataforma (sem botão de download).</span>
-                </li>
-                <li className="flex gap-2">
-                  <span className="text-emerald-600 font-bold shrink-0">✓</span>
-                  <span>Liberação do acesso somente após evento válido da Stripe (ex.: sessão concluída).</span>
-                </li>
-                <li className="flex gap-2">
-                  <span className="text-emerald-600 font-bold shrink-0">✓</span>
-                  <span>Reembolsos ou falhas de pagamento atualizam o direito de acesso no servidor.</span>
-                </li>
-              </ul>
-
-              <div className="flex flex-col sm:flex-row gap-3 pt-2">
-                <Button
-                  type="button"
-                  variant="primary"
-                  size="lg"
-                  className="w-full sm:flex-1 justify-center opacity-70 cursor-not-allowed"
-                  disabled
-                  aria-disabled
-                >
-                  Continuar para pagamento
-                </Button>
-                <Button href="/free-content" variant="outline" size="lg" className="w-full sm:w-auto justify-center">
-                  Voltar à biblioteca
-                </Button>
-              </div>
-              <p className="text-xs text-center text-gray-500">
-                Em breve: redirecionamento para o Stripe Checkout após validação no servidor.
-              </p>
-            </div>
+            <CatalogPayCheckout
+              catalogKind={kind}
+              catalogId={id}
+              amountLabel={formatPriceBRL(row.price_cents)}
+              materialName={row.name}
+            />
           </Card>
         </div>
       </section>
