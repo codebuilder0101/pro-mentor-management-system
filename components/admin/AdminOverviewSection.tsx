@@ -69,7 +69,8 @@ export default function AdminOverviewSection({ active }: Props) {
     },
     {
       label: 'Taxa de conclusão',
-      value: fmtPercent(data?.metrics.completionRatePercent ?? null),
+      value : 0,
+      // value: fmtPercent(data?.metrics.completionRatePercent ?? null),
       hint: 'Biblioteca e mídia: % em estado publicado (entre rascunhos e publicados)',
       icon: '📊',
     },
