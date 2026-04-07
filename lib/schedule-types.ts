@@ -4,6 +4,8 @@ export type ScheduleRequestBody = {
   phone: string;
   preferredDate: string;
   preferredTime: string;
+  /** Preferência do mentorado para o formato do acompanhamento. */
+  mentorshipModel: 'presencial' | 'online';
   context?: string;
 };
 

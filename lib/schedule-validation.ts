@@ -20,12 +20,16 @@ function isValidCalendarDate(ymd: string): boolean {
   return dt.getUTCFullYear() === y && dt.getUTCMonth() === m - 1 && dt.getUTCDate() === d;
 }
 
+export const MENTORSHIP_MODEL_VALUES = ['presencial', 'online'] as const;
+export type MentorshipModel = (typeof MENTORSHIP_MODEL_VALUES)[number];
+
 export type ValidatedSchedule = {
   name: string;
   email: string;
   phone: string;
   preferredDate: string;
   preferredTime: string;
+  mentorshipModel: MentorshipModel;
   context: string;
 };
 
@@ -43,6 +47,7 @@ export function validateSchedulePayload(input: unknown): { ok: true; data: Valid
   const phone = stripControl(String(body.phone ?? '').trim());
   const preferredDate = String(body.preferredDate ?? '').trim();
   const preferredTime = String(body.preferredTime ?? '').trim();
+  const mentorshipRaw = String(body.mentorshipModel ?? '').trim().toLowerCase();
   const context = stripControl(String(body.context ?? '').trim());
 
   if (!name) errors.push('Nome é obrigatório.');
@@ -62,6 +67,14 @@ export function validateSchedulePayload(input: unknown): { ok: true; data: Valid
   if (!preferredTime) errors.push('Horário preferencial é obrigatório.');
   else if (!TIME_HH_MM.test(preferredTime)) errors.push('Horário preferencial inválido (use HH:mm).');
 
+  let mentorshipModel: MentorshipModel | null = null;
+  if (!mentorshipRaw) errors.push('Modelo da mentoria é obrigatório.');
+  else if (!MENTORSHIP_MODEL_VALUES.includes(mentorshipRaw as MentorshipModel)) {
+    errors.push('Modelo da mentoria deve ser presencial ou online.');
+  } else {
+    mentorshipModel = mentorshipRaw as MentorshipModel;
+  }
+
   if (context.length > MAX_CONTEXT) errors.push(`Contexto deve ter no máximo ${MAX_CONTEXT} caracteres.`);
 
   if (errors.length) return { ok: false, errors };
@@ -76,6 +89,7 @@ export function validateSchedulePayload(input: unknown): { ok: true; data: Valid
       phone,
       preferredDate,
       preferredTime: padTime,
+      mentorshipModel: mentorshipModel!,
       context,
     },
   };

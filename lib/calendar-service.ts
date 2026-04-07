@@ -34,11 +34,16 @@ function eventTimeBounds(preferredDate: string, preferredTime: string, timeZone:
   };
 }
 
+function mentorshipModelLabel(model: ValidatedSchedule['mentorshipModel']): string {
+  return model === 'presencial' ? 'Presencial' : 'Online';
+}
+
 function buildDescription(data: ValidatedSchedule): string {
   const lines = [
     `Nome: ${data.name}`,
     `Email: ${data.email}`,
     `Telefone: ${data.phone}`,
+    `Modelo da mentoria: ${mentorshipModelLabel(data.mentorshipModel)}`,
     data.context ? `Contexto:\n${data.context}` : 'Contexto: (não informado)',
   ];
   return lines.join('\n\n');
@@ -60,8 +65,9 @@ export async function createDiagnosticSessionEvent(data: ValidatedSchedule): Pro
 
   const { startDateTime, endDateTime } = eventTimeBounds(data.preferredDate, data.preferredTime, timeZone);
 
+  const modelShort = mentorshipModelLabel(data.mentorshipModel);
   const requestBody: calendar_v3.Schema$Event = {
-    summary: `Sessão de diagnóstico — ${data.name}`.slice(0, 1024),
+    summary: `Sessão de diagnóstico — ${data.name} (${modelShort})`.slice(0, 1024),
     description: buildDescription(data),
     start: { dateTime: startDateTime, timeZone },
     end: { dateTime: endDateTime, timeZone },
