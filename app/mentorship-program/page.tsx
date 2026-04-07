@@ -90,7 +90,7 @@ export default function MentorshipProgramPage() {
 
   const pricingTiers = [
     {
-      name: 'Plano Trimestral',
+      name: 'Mentoria Online',
       duration: '',
       price: '',
       period: '',
@@ -103,7 +103,7 @@ export default function MentorshipProgramPage() {
       highlighted: false,
     },
     {
-      name: 'Plano Semestral',
+      name: 'Mentoria Presencial',
       duration: '',
       price: '',
       period: '',
