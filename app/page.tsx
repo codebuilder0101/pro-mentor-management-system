@@ -1,31 +1,19 @@
 import Image from 'next/image';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
+import { fetchPublishedDepoimentos } from '@/lib/supabase/server';
 
 /* Foto: coloque o arquivo em public/ (ex.: gustavoimage.jpg) e use src="/gustavoimage.jpg" — nunca use o prefixo /public/ na URL. */
-/* Depoimentos de exemplo para o MVP — substituir pelos textos reais assim que o cliente autorizar. */
-const testimonials = [
-  {
-    quote:
-      'Eu cheguei com a agenda explodindo e zero clareza do que cobrar primeiro da equipe. Em poucas sessões já enxerguei onde eu mesmo segurava o time. Hoje tenho rituais simples que funcionam.',
-    name: 'Fernando A.',
-    role: 'Diretor industrial',
-  },
-  {
-    quote:
-      'Sou da parte técnica e sempre me vi bem no detalhe. O que faltava era conversar com outras áreas sem parecer “seco”. A mentoria foi prática, sem teoria vazia.',
-    name: 'Paula M.',
-    role: 'Especialista sênior',
-  },
-  {
-    quote:
-      'Estava mudando de cargo e com medo de não dar conta. O Gustavo foi direto: pauta clara, desafios reais e follow-up. Saí com um plano que usei na primeira semana.',
-    name: 'Bruno R.',
-    role: 'Gerente de operações',
-  },
-];
 
-export default function Home() {
+export const dynamic = 'force-dynamic';
+
+export default async function Home() {
+  let depoimentos: Awaited<ReturnType<typeof fetchPublishedDepoimentos>> = [];
+  try {
+    depoimentos = await fetchPublishedDepoimentos();
+  } catch {
+    depoimentos = [];
+  }
   return (
     <div className="min-h-screen">
       {/* Hero: foto em public/gustavoimage.jpg → URL é /gustavoimage.jpg */}
@@ -251,25 +239,36 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center mb-2 text-gray-900">Depoimentos</h2>
-          <p className="text-center text-gray-600 mb-10 text-lg">
-            Resultados de quem já vivenciou a mentoria
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonials.map((t, i) => (
-              <Card key={i} className="flex flex-col h-full border border-gray-100 shadow-sm">
-                <p className="text-gray-700 leading-relaxed mb-6 grow italic">&ldquo;{t.quote}&rdquo;</p>
-                <div className="pt-4 border-t border-gray-100">
-                  <p className="font-semibold text-gray-900">{t.name}</p>
-                  <p className="text-sm text-gray-500">{t.role}</p>
-                </div>
-              </Card>
-            ))}
+      {depoimentos.length > 0 ? (
+        <section className="py-16 bg-gray-50 border-t border-gray-100">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-3xl font-bold text-center mb-2 text-gray-900">Depoimentos</h2>
+            <p className="text-center text-gray-600 mb-10 text-lg max-w-2xl mx-auto leading-relaxed">
+              Resultados de quem já vivenciou a mentoria
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {depoimentos.map((d) => (
+                <Card
+                  key={d.id}
+                  className="flex flex-col h-full border border-gray-100 bg-white shadow-md rounded-xl"
+                >
+                  <p className="text-gray-700 leading-relaxed mb-6 grow text-[15px] md:text-base text-justify">
+                    &ldquo;{d.conteudo}&rdquo;
+                  </p>
+                  <div className="mt-auto pt-2 space-y-0.5">
+                    {d.nome_autor ? (
+                      <p className="font-semibold text-gray-900 tracking-tight">{d.nome_autor}</p>
+                    ) : null}
+                    {d.cargo_autor ? (
+                      <p className="text-sm text-gray-500 leading-snug">{d.cargo_autor}</p>
+                    ) : null}
+                  </div>
+                </Card>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      ) : null}
 
       <section className="py-16 bg-[#2563EB] text-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

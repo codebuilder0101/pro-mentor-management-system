@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import type { ArtigoRow } from '@/lib/artigo-types';
 import type { DocumentRow, VideoRow } from '@/lib/catalog-types';
 import type { LibraryItem } from '@/lib/library-types';
 
@@ -57,4 +58,18 @@ export async function getCatalogDocumentById(id: string): Promise<DocumentRow | 
   const { data, error } = await supabase.from('documents').select('*').eq('id', id).maybeSingle();
   if (error) throw error;
   return (data ?? null) as DocumentRow | null;
+}
+
+/** Depoimentos publicados (secção na página de mentoria). */
+export async function fetchPublishedDepoimentos(): Promise<ArtigoRow[]> {
+  const supabase = createServerAnonClient();
+  const { data, error } = await supabase
+    .from('artigos')
+    .select('*')
+    .eq('publicado', true)
+    .eq('tipo', 'depoimento')
+    .order('ordem', { ascending: true })
+    .order('created_at', { ascending: false });
+  if (error) throw error;
+  return (data ?? []) as ArtigoRow[];
 }

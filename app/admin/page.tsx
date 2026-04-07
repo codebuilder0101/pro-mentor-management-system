@@ -3,8 +3,9 @@
 import { useState } from 'react';
 import Card from '@/components/ui/Card';
 import AdminContentSection from '@/components/admin/AdminContentSection';
+import AdminArtigosSection from '@/components/admin/AdminArtigosSection';
 
-type TabType = 'overview' | 'content' | 'sessions';
+type TabType = 'overview' | 'content' | 'sessions' | 'artigos';
 
 interface ContentItem {
   id: number;
@@ -118,6 +119,16 @@ export default function AdminPage() {
             >
               Sessões
             </button>
+            <button
+              onClick={() => setActiveTab('artigos')}
+              className={`py-4 px-2 border-b-2 font-medium transition-colors ${
+                activeTab === 'artigos'
+                  ? 'border-[#2563EB] text-[#2563EB]'
+                  : 'border-transparent text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              Artigos
+            </button>
           </div>
         </div>
       </section>
@@ -187,6 +198,8 @@ export default function AdminPage() {
 
           {/* Content Tab */}
           {activeTab === 'content' && <AdminContentSection />}
+
+          {activeTab === 'artigos' && <AdminArtigosSection />}
 
           {/* Sessions Tab */}
           {activeTab === 'sessions' && (
