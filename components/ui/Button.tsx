@@ -9,6 +9,9 @@ interface ButtonProps {
   className?: string;
   type?: 'button' | 'submit' | 'reset';
   href?: string;
+  /** Só aplicado quando `href` está definido (ex.: links externos). */
+  target?: React.HTMLAttributeAnchorTarget;
+  rel?: string;
   disabled?: boolean;
 }
 
@@ -20,6 +23,8 @@ export default function Button({
   className = '',
   type = 'button',
   href,
+  target,
+  rel,
   disabled = false,
 }: ButtonProps) {
   const baseStyles = 'font-semibold rounded-lg transition-all duration-200 inline-flex items-center justify-center';
@@ -41,7 +46,14 @@ export default function Button({
 
   if (href) {
     return (
-      <Link href={href} className={mergedClassName} onClick={onClick} aria-disabled={disabled}>
+      <Link
+        href={href}
+        className={mergedClassName}
+        onClick={onClick}
+        aria-disabled={disabled}
+        target={target}
+        rel={rel}
+      >
         {children}
       </Link>
     );

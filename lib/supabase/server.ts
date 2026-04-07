@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import type { DocumentRow, VideoRow } from '@/lib/catalog-types';
 import type { LibraryItem } from '@/lib/library-types';
 
 /** Server-only: anon client for public reads (respects RLS). */
@@ -22,4 +23,24 @@ export async function getPublishedLibraryItemById(id: string): Promise<LibraryIt
 
   if (error) throw error;
   return data as LibraryItem | null;
+}
+
+export async function fetchCatalogVideos(): Promise<VideoRow[]> {
+  const supabase = createServerAnonClient();
+  const { data, error } = await supabase
+    .from('videos')
+    .select('*')
+    .order('created_at', { ascending: false });
+  if (error) throw error;
+  return (data ?? []) as VideoRow[];
+}
+
+export async function fetchCatalogDocuments(): Promise<DocumentRow[]> {
+  const supabase = createServerAnonClient();
+  const { data, error } = await supabase
+    .from('documents')
+    .select('*')
+    .order('created_at', { ascending: false });
+  if (error) throw error;
+  return (data ?? []) as DocumentRow[];
 }

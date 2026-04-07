@@ -1,156 +1,64 @@
-'use client';
-
-import { useState } from 'react';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
+import CatalogBrowser, { type CatalogListItem } from '@/components/free-content/CatalogBrowser';
+import { formatDurationSeconds } from '@/lib/catalog-format';
+import { formatPriceBRL } from '@/lib/format-price';
+import { catalogMaterialPublicUrl } from '@/lib/catalog-url';
+import { fetchCatalogDocuments, fetchCatalogVideos } from '@/lib/supabase/server';
 
-type ContentType = 'all' | 'video' | 'ebook' | 'article' | 'tool' | 'guide';
+/** Catálogo vem do Supabase; não pré-renderizar de forma fixa. */
+export const dynamic = 'force-dynamic';
 
-interface ContentItem {
-  id: number;
-  title: string;
-  type: 'video' | 'ebook' | 'article' | 'tool' | 'guide';
-  duration?: string;
-  pages?: number;
-  views: number;
-  description: string;
+function priceLine(cents: number): string {
+  return cents > 0 ? formatPriceBRL(cents) : 'Gratuito';
 }
 
-const contentData: ContentItem[] = [
-  {
-    id: 1,
-    title: 'Liderança adaptativa em ambientes voláteis',
-    type: 'video',
-    duration: '22 min',
-    views: 1243,
-    description:
-      'Como ajustar estilo de liderança e prioridades quando o contexto organizacional muda com frequência.',
-  },
-  {
-    id: 2,
-    title: 'Guia: conversas difíceis com equipes e pares',
-    type: 'guide',
-    pages: 14,
-    views: 892,
-    description:
-      'Roteiro prático para preparar feedback, expectativas e acordos em situações sensíveis.',
-  },
-  {
-    id: 3,
-    title: 'E-book: pensamento estratégico para quem executa',
-    type: 'ebook',
-    pages: 48,
-    views: 756,
-    description:
-      'Do operacional ao estratégico: priorização, alinhamento com metas e leitura de cenário.',
-  },
-  {
-    id: 4,
-    title: 'Artigo: decisões com dados e bom senso',
-    type: 'article',
-    pages: 8,
-    views: 1087,
-    description:
-      'Como combinar indicadores, contexto e julgamento para decidir com mais clareza.',
-  },
-  {
-    id: 5,
-    title: 'Template: mapa de stakeholders e influência',
-    type: 'tool',
-    pages: 4,
-    views: 654,
-    description:
-      'Ferramenta para mapear relações, interesses e canais de comunicação em projetos e mudanças.',
-  },
-  {
-    id: 6,
-    title: 'Gestão de tempo e foco para líderes',
-    type: 'video',
-    duration: '28 min',
-    views: 923,
-    description:
-      'Agenda, energia e prioridades: reduzindo ruído e aumentando impacto na liderança.',
-  },
-  {
-    id: 7,
-    title: 'Melhoria de processos na prática',
-    type: 'article',
-    pages: 10,
-    views: 1156,
-    description:
-      'Texto curto sobre melhoria contínua no dia a dia. Em alguns trechos uso Lean só como referência — um tema entre outros, não o centro do site.',
-  },
-  {
-    id: 8,
-    title: 'Checklist: onboarding e integração de talentos',
-    type: 'tool',
-    pages: 3,
-    views: 534,
-    description:
-      'Lista para alinhar expectativas, cultura e primeiros resultados em novas contratações.',
-  },
-  {
-    id: 9,
-    title: 'Cultura de feedback e desenvolvimento contínuo',
-    type: 'ebook',
-    pages: 36,
-    views: 678,
-    description:
-      'Estruturas simples para criar rituais de desenvolvimento sem burocratizar a gestão.',
-  },
-  {
-    id: 10,
-    title: 'Transição de carreira: diagnóstico e próximos passos',
-    type: 'video',
-    duration: '19 min',
-    views: 812,
-    description:
-      'Para profissionais em mudança de função ou empresa: como organizar narrativa e plano de ação.',
-  },
-];
+function buildCatalogItems(
+  videos: Awaited<ReturnType<typeof fetchCatalogVideos>>,
+  documents: Awaited<ReturnType<typeof fetchCatalogDocuments>>
+): CatalogListItem[] {
+  const rows: Array<CatalogListItem & { sort: number }> = [];
 
-export default function FreeContentPage() {
-  const [filter, setFilter] = useState<ContentType>('all');
+  for (const v of videos) {
+    rows.push({
+      id: v.id,
+      type: 'video',
+      title: v.name,
+      metaLine: formatDurationSeconds(v.duration_seconds),
+      priceLine: priceLine(v.price_cents),
+      description: 'Vídeo disponível para consulta na biblioteca.',
+      href: catalogMaterialPublicUrl('video', v.filepath),
+      sort: new Date(v.created_at).getTime(),
+    });
+  }
 
-  const filteredContent =
-    filter === 'all' ? contentData : contentData.filter((item) => item.type === filter);
+  for (const d of documents) {
+    rows.push({
+      id: d.id,
+      type: 'ebook',
+      title: d.name,
+      metaLine: 'Documento',
+      priceLine: priceLine(d.price_cents),
+      description: 'Documento disponível para download ou consulta.',
+      href: catalogMaterialPublicUrl('document', d.filepath),
+      sort: new Date(d.created_at).getTime(),
+    });
+  }
 
-  const getTypeIcon = (type: string) => {
-    switch (type) {
-      case 'video':
-        return '🎥';
-      case 'ebook':
-        return '📚';
-      case 'article':
-        return '📰';
-      case 'tool':
-        return '🧰';
-      case 'guide':
-        return '📄';
-      default:
-        return '📁';
-    }
-  };
+  rows.sort((a, b) => b.sort - a.sort);
+  return rows.map(({ sort: _s, ...item }) => item);
+}
 
-  const getTypeLabel = (type: string) => {
-    switch (type) {
-      case 'video':
-        return 'Vídeo';
-      case 'ebook':
-        return 'Livro / e-book';
-      case 'article':
-        return 'Artigo';
-      case 'tool':
-        return 'Ferramenta';
-      case 'guide':
-        return 'Guia';
-      default:
-        return type;
-    }
-  };
+export default async function FreeContentPage() {
+  let items: CatalogListItem[] = [];
+  let loadError: string | null = null;
 
-  const countBy = (t: ContentType) =>
-    t === 'all' ? contentData.length : contentData.filter((i) => i.type === t).length;
+  try {
+    const [videos, documents] = await Promise.all([fetchCatalogVideos(), fetchCatalogDocuments()]);
+    items = buildCatalogItems(videos, documents);
+  } catch (e) {
+    loadError = e instanceof Error ? e.message : 'Erro ao carregar o catálogo.';
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -161,78 +69,34 @@ export default function FreeContentPage() {
           </p>
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Biblioteca de aprendizagem estratégica</h1>
           <p className="text-xl text-blue-100 max-w-3xl mx-auto text-justify">
-            Vídeo, artigo, e-book, guia, planilha: material para você estudar no seu ritmo e apoiar
-            decisões no trabalho. Complementa a mentoria, não substitui conversa com o mentor.
+            Vídeos e livros/e-books para você estudar no seu ritmo e apoiar decisões no trabalho.
+            Complementa a mentoria, não substitui conversa com o mentor.
           </p>
         </div>
       </section>
 
       <section className="py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {loadError ? (
+            <div className="rounded-lg border border-red-200 bg-red-50 text-red-800 px-4 py-3 mb-8 text-sm">
+              Não foi possível carregar os materiais. Verifique a ligação ao Supabase e as variáveis de ambiente.
+              <span className="block mt-1 text-red-600 font-mono text-xs">{loadError}</span>
+            </div>
+          ) : null}
 
-          <div className="flex flex-wrap gap-3 mb-8">
-            <Button variant={filter === 'all' ? 'primary' : 'outline'} onClick={() => setFilter('all')}>
-              Todos ({countBy('all')})
-            </Button>
-            <Button
-              variant={filter === 'video' ? 'primary' : 'outline'}
-              onClick={() => setFilter('video')}
-            >
-              Vídeos ({countBy('video')})
-            </Button>
-            <Button
-              variant={filter === 'ebook' ? 'primary' : 'outline'}
-              onClick={() => setFilter('ebook')}
-            >
-              Livros / e-books ({countBy('ebook')})
-            </Button>
-            <Button
-              variant={filter === 'article' ? 'primary' : 'outline'}
-              onClick={() => setFilter('article')}
-            >
-              Artigos ({countBy('article')})
-            </Button>
-            <Button
-              variant={filter === 'tool' ? 'primary' : 'outline'}
-              onClick={() => setFilter('tool')}
-            >
-              Ferramentas ({countBy('tool')})
-            </Button>
-            <Button
-              variant={filter === 'guide' ? 'primary' : 'outline'}
-              onClick={() => setFilter('guide')}
-            >
-              Guias ({countBy('guide')})
-            </Button>
-          </div>
+          {!loadError && items.length === 0 ? (
+            <p className="text-center text-gray-500 py-12 mb-12">
+              Ainda não há materiais no catálogo. Adicione vídeos ou documentos no painel administrativo.
+            </p>
+          ) : null}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-            {filteredContent.map((item) => (
-              <Card key={item.id} hover>
-                <div className="flex items-start justify-between mb-3">
-                  <span className="text-4xl">{getTypeIcon(item.type)}</span>
-                  <span className="text-xs bg-blue-100 text-[#2563EB] px-2 py-1 rounded">
-                    {getTypeLabel(item.type)}
-                  </span>
-                </div>
-                <h3 className="text-xl font-semibold mb-2 text-gray-900">{item.title}</h3>
-                <p className="text-gray-600 text-sm mb-4">{item.description}</p>
-                <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
-                  <span>{item.duration || `${item.pages} pág.`}</span>
-                  <span>{item.views} visualizações</span>
-                </div>
-                <Button variant="primary" className="w-full">
-                  Acessar material
-                </Button>
-              </Card>
-            ))}
-          </div>
+          {!loadError && items.length > 0 ? <CatalogBrowser items={items} /> : null}
 
           <Card className="bg-gradient-to-r from-[#2563EB] to-blue-700 text-white text-center">
             <h2 className="text-2xl md:text-3xl font-bold mb-4">Quer ir além da biblioteca?</h2>
             <p className="text-lg mb-6 text-blue-100">
-              Se quiser ir além do material gravado, o programa de mentoria organiza encontros em
-              fases, individual e em grupo, com acompanhamento mais de perto.
+              Se quiser ir além do material gravado, o programa de mentoria organiza encontros em fases,
+              individual e em grupo, com acompanhamento mais de perto.
             </p>
             <Button href="/mentorship-program" variant="secondary" size="lg">
               Conhecer o programa de mentoria
