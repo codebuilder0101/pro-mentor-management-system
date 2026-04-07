@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Card from '@/components/ui/Card';
-import AdminMediaSection from '@/components/admin/AdminMediaSection';
+import AdminContentSection from '@/components/admin/AdminContentSection';
 
 type TabType = 'overview' | 'content' | 'sessions';
 
@@ -186,7 +186,7 @@ export default function AdminPage() {
           )}
 
           {/* Content Tab */}
-          {activeTab === 'content' && <AdminMediaSection />}
+          {activeTab === 'content' && <AdminContentSection />}
 
           {/* Sessions Tab */}
           {activeTab === 'sessions' && (

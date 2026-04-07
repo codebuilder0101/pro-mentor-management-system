@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 
-/** Server-only: bypasses RLS. Use only in Route Handlers after admin auth. */
+/** Server-only: service role bypasses RLS. Use only in Route Handlers. */
 export function createServiceRoleClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
