@@ -105,3 +105,30 @@ export async function createDiagnosticSessionEvent(data: ValidatedSchedule): Pro
     meetLink,
   };
 }
+
+/** Eventos futuros no calendário cujo título sugere sessão de diagnóstico (agendamento via site). */
+export async function countUpcomingDiagnosticEvents(): Promise<number | null> {
+  try {
+    const calendarId = process.env.GOOGLE_CALENDAR_ID?.trim() || 'primary';
+    const auth = getOAuthClient();
+    const calendar = google.calendar({ version: 'v3', auth });
+    const res = await calendar.events.list({
+      calendarId,
+      timeMin: new Date().toISOString(),
+      singleEvents: true,
+      orderBy: 'startTime',
+      maxResults: 250,
+      q: 'diagnóstico',
+    });
+    const items = res.data.items ?? [];
+    let n = 0;
+    for (const ev of items) {
+      const s = (ev.summary ?? '').toLowerCase();
+      if (s.includes('diagnóstico')) n += 1;
+    }
+    return n;
+  } catch (e) {
+    console.warn('[countUpcomingDiagnosticEvents]', e);
+    return null;
+  }
+}

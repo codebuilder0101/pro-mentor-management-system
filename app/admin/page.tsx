@@ -4,16 +4,9 @@ import { useState } from 'react';
 import Card from '@/components/ui/Card';
 import AdminContentSection from '@/components/admin/AdminContentSection';
 import AdminArtigosSection from '@/components/admin/AdminArtigosSection';
+import AdminOverviewSection from '@/components/admin/AdminOverviewSection';
 
 type TabType = 'overview' | 'content' | 'sessions' | 'artigos';
-
-interface ContentItem {
-  id: number;
-  title: string;
-  type: string;
-  views: number;
-  status: 'published' | 'draft';
-}
 
 interface SessionRequest {
   id: number;
@@ -26,20 +19,6 @@ interface SessionRequest {
 
 export default function AdminPage() {
   const [activeTab, setActiveTab] = useState<TabType>('overview');
-
-  // Mock data
-  const metrics = [
-    { label: 'Total de Usuários', value: '1,247', change: '+12%', icon: '👥' },
-    { label: 'Conteúdos Publicados', value: '10', change: '+3', icon: '📚' },
-    { label: 'Sessões Agendadas', value: '28', change: '+7', icon: '📅' },
-    { label: 'Taxa de Conclusão', value: '78%', change: '+5%', icon: '📊' },
-  ];
-
-  const [contentItems, setContentItems] = useState<ContentItem[]>([
-    { id: 1, title: 'Liderança adaptativa em ambientes voláteis', type: 'Vídeo', views: 1243, status: 'published' },
-    { id: 2, title: 'Guia: conversas difíceis com equipes', type: 'Guia', views: 892, status: 'published' },
-    { id: 3, title: 'Workshop: feedback e cultura', type: 'Curso', views: 0, status: 'draft' },
-  ]);
 
   const [sessionRequests, setSessionRequests] = useState<SessionRequest[]>([
     { id: 1, name: 'João Silva', email: 'joao@email.com', date: '2026-04-15', time: '10:00', status: 'pending' },
@@ -137,64 +116,7 @@ export default function AdminPage() {
       <section className="py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Overview Tab */}
-          {activeTab === 'overview' && (
-            <div>
-              <h2 className="text-2xl font-bold mb-6 text-gray-900">Métricas Principais</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                {metrics.map((metric, index) => (
-                  <Card key={index}>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-3xl">{metric.icon}</span>
-                      <span className="text-sm text-green-600 font-semibold">
-                        {metric.change}
-                      </span>
-                    </div>
-                    <p className="text-sm text-gray-600 mb-1">{metric.label}</p>
-                    <p className="text-3xl font-bold text-gray-900">{metric.value}</p>
-                  </Card>
-                ))}
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <Card>
-                  <h3 className="text-xl font-semibold mb-4 text-gray-900">
-                    Atividade Recente
-                  </h3>
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between py-2 border-b">
-                      <span className="text-gray-700">Nova inscrição: João Silva</span>
-                      <span className="text-sm text-gray-500">há 2 horas</span>
-                    </div>
-                    <div className="flex items-center justify-between py-2 border-b">
-                      <span className="text-gray-700">Sessão confirmada: Maria Santos</span>
-                      <span className="text-sm text-gray-500">há 5 horas</span>
-                    </div>
-                    <div className="flex items-center justify-between py-2 border-b">
-                      <span className="text-gray-700">Novo conteúdo publicado</span>
-                      <span className="text-sm text-gray-500">ontem</span>
-                    </div>
-                  </div>
-                </Card>
-
-                <Card>
-                  <h3 className="text-xl font-semibold mb-4 text-gray-900">
-                    Conteúdos Mais Acessados
-                  </h3>
-                  <div className="space-y-3">
-                    {contentItems
-                      .filter((item) => item.status === 'published')
-                      .sort((a, b) => b.views - a.views)
-                      .map((item) => (
-                        <div key={item.id} className="flex items-center justify-between py-2 border-b">
-                          <span className="text-gray-700">{item.title}</span>
-                          <span className="text-sm text-gray-500">{item.views} views</span>
-                        </div>
-                      ))}
-                  </div>
-                </Card>
-              </div>
-            </div>
-          )}
+          {activeTab === 'overview' && <AdminOverviewSection active />}
 
           {/* Content Tab */}
           {activeTab === 'content' && <AdminContentSection />}
