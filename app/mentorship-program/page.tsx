@@ -91,9 +91,9 @@ export default function MentorshipProgramPage() {
   const pricingTiers = [
     {
       name: 'Plano Trimestral',
-      duration: '3 meses',
-      price: 'R$ 999',
-      period: '/mês',
+      duration: '',
+      price: '',
+      period: '',
       features: [
         'Jornada estruturada em fases (referência: 16 sessões no programa completo)',
         'Combinação de sessões individuais e em grupo (conforme modalidade)',
@@ -104,10 +104,10 @@ export default function MentorshipProgramPage() {
     },
     {
       name: 'Plano Semestral',
-      duration: '6 meses',
-      price: 'R$ 1.799',
-      period: '/mês',
-      originalPrice: 'R$ 999',
+      duration: '',
+      price: '',
+      period: '',
+      originalPrice: '',
       features: [
         'Tudo do plano trimestral',
         'Maior profundidade na jornada e nos entregáveis',
