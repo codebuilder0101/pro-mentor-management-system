@@ -109,7 +109,7 @@ export default function MentorshipProgramPage() {
       period: '',
       originalPrice: '',
       features: [
-        'Tudo do plano trimestral',
+        'Plano da mentoria online',
         'Maior profundidade na jornada e nos entregáveis',
         'Acompanhamento reforçado em projetos e decisões',
         'Prioridade em combinar datas e formatos de sessão',
