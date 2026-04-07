@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
-import ContentAddModal from '@/components/admin/ContentAddModal';
+import ContentAddModal, { type ContentEditTarget } from '@/components/admin/ContentAddModal';
 import type { DocumentRow, VideoRow } from '@/lib/catalog-types';
 import { formatPriceBRL } from '@/lib/format-price';
 
@@ -19,7 +19,8 @@ type Row = {
 };
 
 export default function AdminContentSection() {
-  const [modalOpen, setModalOpen] = useState(false);
+  const [addOpen, setAddOpen] = useState(false);
+  const [editTarget, setEditTarget] = useState<ContentEditTarget | null>(null);
   const [videos, setVideos] = useState<VideoRow[]>([]);
   const [documents, setDocuments] = useState<DocumentRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -76,6 +77,30 @@ export default function AdminContentSection() {
     return [...v, ...d].sort((a, b) => b.sortAt.localeCompare(a.sortAt));
   }, [videos, documents]);
 
+  function openEdit(row: Row) {
+    setAddOpen(false);
+    if (row.kind === 'video') {
+      const full = videos.find((v) => v.id === row.id);
+      if (full) {
+        setEditTarget({ kind: 'video', row: full });
+        return;
+      }
+      setError('Não foi possível carregar este vídeo para edição.');
+      return;
+    }
+    const full = documents.find((d) => d.id === row.id);
+    if (full) {
+      setEditTarget({ kind: 'document', row: full });
+      return;
+    }
+    setError('Não foi possível carregar este documento para edição.');
+  }
+
+  function closeModal() {
+    setAddOpen(false);
+    setEditTarget(null);
+  }
+
   async function removeRow(row: Row) {
     const label = row.kind === 'video' ? 'vídeo' : 'documento';
     if (!confirm(`Excluir este ${label}?`)) return;
@@ -94,7 +119,14 @@ export default function AdminContentSection() {
     <div>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-900">Gerenciar Conteúdos</h2>
-        <Button onClick={() => setModalOpen(true)}>+ Novo Conteúdo</Button>
+        <Button
+          onClick={() => {
+            setEditTarget(null);
+            setAddOpen(true);
+          }}
+        >
+          + Novo Conteúdo
+        </Button>
       </div>
 
       {error && (
@@ -146,6 +178,13 @@ export default function AdminContentSection() {
                     <td className="py-3 px-4 whitespace-nowrap">
                       <button
                         type="button"
+                        className="text-[#2563EB] hover:underline text-sm mr-3"
+                        onClick={() => openEdit(row)}
+                      >
+                        Editar
+                      </button>
+                      <button
+                        type="button"
                         className="text-red-600 hover:underline text-sm"
                         onClick={() => void removeRow(row)}
                       >
@@ -161,9 +200,13 @@ export default function AdminContentSection() {
       </Card>
 
       <ContentAddModal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        onSuccess={() => void loadAll()}
+        open={addOpen || editTarget !== null}
+        editTarget={editTarget}
+        onClose={closeModal}
+        onSuccess={() => {
+          void loadAll();
+          closeModal();
+        }}
       />
     </div>
   );

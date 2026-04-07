@@ -2,13 +2,20 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import Button from '@/components/ui/Button';
+import type { DocumentRow, VideoRow } from '@/lib/catalog-types';
 
 type CatalogTab = 'video' | 'document';
+
+export type ContentEditTarget =
+  | { kind: 'video'; row: VideoRow }
+  | { kind: 'document'; row: DocumentRow };
 
 type Props = {
   open: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  /** Se definido, o modal abre em modo edição (sem alternar tipo). */
+  editTarget?: ContentEditTarget | null;
 };
 
 const initialVideo = {
@@ -24,12 +31,16 @@ const initialDocument = {
   price_cents: '0',
 };
 
-export default function ContentAddModal({ open, onClose, onSuccess }: Props) {
+export default function ContentAddModal({ open, onClose, onSuccess, editTarget = null }: Props) {
   const [tab, setTab] = useState<CatalogTab>('video');
   const [videoForm, setVideoForm] = useState(initialVideo);
   const [docForm, setDocForm] = useState(initialDocument);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const isEdit = editTarget !== null;
+  const editingVideo = editTarget?.kind === 'video' ? editTarget.row : null;
+  const editingDocument = editTarget?.kind === 'document' ? editTarget.row : null;
 
   const resetAll = useCallback(() => {
     setVideoForm(initialVideo);
@@ -38,13 +49,34 @@ export default function ContentAddModal({ open, onClose, onSuccess }: Props) {
   }, []);
 
   useEffect(() => {
-    if (open) {
-      resetAll();
+    if (!open) return;
+    if (editingVideo) {
       setTab('video');
+      setVideoForm({
+        name: editingVideo.name,
+        duration_seconds: String(editingVideo.duration_seconds),
+        filepath: editingVideo.filepath,
+        price_cents: String(editingVideo.price_cents),
+      });
+      setError(null);
+      return;
     }
-  }, [open, resetAll]);
+    if (editingDocument) {
+      setTab('document');
+      setDocForm({
+        name: editingDocument.name,
+        filepath: editingDocument.filepath,
+        price_cents: String(editingDocument.price_cents),
+      });
+      setError(null);
+      return;
+    }
+    resetAll();
+    setTab('video');
+  }, [open, editingVideo, editingDocument, resetAll]);
 
   function switchTab(next: CatalogTab) {
+    if (isEdit) return;
     setTab(next);
     setError(null);
   }
@@ -74,25 +106,34 @@ export default function ContentAddModal({ open, onClose, onSuccess }: Props) {
       setError('Preço (centavos) deve ser um inteiro ≥ 0.');
       return;
     }
+    const payload = {
+      name,
+      duration_seconds: dur,
+      filepath,
+      price_cents: price,
+    };
     setSubmitting(true);
     try {
-      const res = await fetch('/api/admin/videos', {
-        method: 'POST',
+      const url = editingVideo
+        ? `/api/admin/videos/${editingVideo.id}`
+        : '/api/admin/videos';
+      const res = await fetch(url, {
+        method: editingVideo ? 'PATCH' : 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name,
-          duration_seconds: dur,
-          filepath,
-          price_cents: price,
-        }),
+        body: JSON.stringify(payload),
       });
       const json = (await res.json()) as { ok?: boolean; error?: string };
-      if (!res.ok || !json.ok) throw new Error(json.error || 'Falha ao criar o vídeo.');
+      if (!res.ok || !json.ok) {
+        throw new Error(
+          json.error ||
+            (editingVideo ? 'Falha ao atualizar o vídeo.' : 'Falha ao criar o vídeo.')
+        );
+      }
       resetAll();
       onSuccess();
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao criar.');
+      setError(err instanceof Error ? err.message : editingVideo ? 'Erro ao atualizar.' : 'Erro ao criar.');
     } finally {
       setSubmitting(false);
     }
@@ -116,24 +157,31 @@ export default function ContentAddModal({ open, onClose, onSuccess }: Props) {
       setError('Preço (centavos) é obrigatório e deve ser um inteiro ≥ 0.');
       return;
     }
+    const payload = { name, filepath, price_cents: price };
     setSubmitting(true);
     try {
-      const res = await fetch('/api/admin/documents', {
-        method: 'POST',
+      const url = editingDocument
+        ? `/api/admin/documents/${editingDocument.id}`
+        : '/api/admin/documents';
+      const res = await fetch(url, {
+        method: editingDocument ? 'PATCH' : 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name,
-          filepath,
-          price_cents: price,
-        }),
+        body: JSON.stringify(payload),
       });
       const json = (await res.json()) as { ok?: boolean; error?: string };
-      if (!res.ok || !json.ok) throw new Error(json.error || 'Falha ao criar documento.');
+      if (!res.ok || !json.ok) {
+        throw new Error(
+          json.error ||
+            (editingDocument ? 'Falha ao atualizar o documento.' : 'Falha ao criar documento.')
+        );
+      }
       resetAll();
       onSuccess();
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao criar.');
+      setError(
+        err instanceof Error ? err.message : editingDocument ? 'Erro ao atualizar.' : 'Erro ao criar.'
+      );
     } finally {
       setSubmitting(false);
     }
@@ -154,17 +202,39 @@ export default function ContentAddModal({ open, onClose, onSuccess }: Props) {
     </button>
   );
 
+  const modalTitle = editingVideo
+    ? 'Editar vídeo'
+    : editingDocument
+      ? 'Editar documento'
+      : 'Novo conteúdo';
+
+  const primaryVideoLabel = submitting
+    ? editingVideo
+      ? 'A salvar…'
+      : 'A criar…'
+    : editingVideo
+      ? 'Salvar alterações'
+      : 'Criar';
+
+  const primaryDocLabel = submitting
+    ? editingDocument
+      ? 'A salvar…'
+      : 'A criar…'
+    : editingDocument
+      ? 'Salvar alterações'
+      : 'Criar';
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
       role="dialog"
       aria-modal="true"
-      aria-labelledby="content-add-title"
+      aria-labelledby="content-modal-title"
     >
       <div className="bg-white rounded-xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
         <div className="sticky top-0 bg-white border-b px-6 py-4 flex justify-between items-center rounded-t-xl z-10">
-          <h2 id="content-add-title" className="text-lg font-bold text-gray-900">
-            Novo conteúdo
+          <h2 id="content-modal-title" className="text-lg font-bold text-gray-900">
+            {modalTitle}
           </h2>
           <button
             type="button"
@@ -179,10 +249,12 @@ export default function ContentAddModal({ open, onClose, onSuccess }: Props) {
           </button>
         </div>
 
-        <div className="px-6 pt-4 flex gap-2">
-          {tabBtn('video', 'Vídeo')}
-          {tabBtn('document', 'Documento')}
-        </div>
+        {!isEdit && (
+          <div className="px-6 pt-4 flex gap-2">
+            {tabBtn('video', 'Vídeo')}
+            {tabBtn('document', 'Documento')}
+          </div>
+        )}
 
         <div className="px-6 py-4">
           {error && (
@@ -239,7 +311,7 @@ export default function ContentAddModal({ open, onClose, onSuccess }: Props) {
               </div>
               <div className="flex flex-wrap gap-3 pt-2 border-t">
                 <Button type="submit" variant="primary" disabled={submitting}>
-                  {submitting ? 'A criar…' : 'Criar'}
+                  {primaryVideoLabel}
                 </Button>
                 <Button type="button" variant="outline" onClick={onClose} disabled={submitting}>
                   Cancelar
@@ -285,7 +357,7 @@ export default function ContentAddModal({ open, onClose, onSuccess }: Props) {
               </div>
               <div className="flex flex-wrap gap-3 pt-2 border-t">
                 <Button type="submit" variant="primary" disabled={submitting}>
-                  {submitting ? 'A criar…' : 'Criar'}
+                  {primaryDocLabel}
                 </Button>
                 <Button type="button" variant="outline" onClick={onClose} disabled={submitting}>
                   Cancelar
