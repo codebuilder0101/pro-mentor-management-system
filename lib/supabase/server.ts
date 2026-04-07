@@ -44,3 +44,17 @@ export async function fetchCatalogDocuments(): Promise<DocumentRow[]> {
   if (error) throw error;
   return (data ?? []) as DocumentRow[];
 }
+
+export async function getCatalogVideoById(id: string): Promise<VideoRow | null> {
+  const supabase = createServerAnonClient();
+  const { data, error } = await supabase.from('videos').select('*').eq('id', id).maybeSingle();
+  if (error) throw error;
+  return (data ?? null) as VideoRow | null;
+}
+
+export async function getCatalogDocumentById(id: string): Promise<DocumentRow | null> {
+  const supabase = createServerAnonClient();
+  const { data, error } = await supabase.from('documents').select('*').eq('id', id).maybeSingle();
+  if (error) throw error;
+  return (data ?? null) as DocumentRow | null;
+}

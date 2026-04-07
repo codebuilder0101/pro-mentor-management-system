@@ -20,27 +20,37 @@ function buildCatalogItems(
   const rows: Array<CatalogListItem & { sort: number }> = [];
 
   for (const v of videos) {
+    const paid = v.price_cents > 0;
     rows.push({
       id: v.id,
       type: 'video',
       title: v.name,
       metaLine: formatDurationSeconds(v.duration_seconds),
+      priceCents: v.price_cents,
       priceLine: priceLine(v.price_cents),
-      description: 'Vídeo disponível para consulta na biblioteca.',
-      href: catalogMaterialPublicUrl('video', v.filepath),
+      description: paid
+        ? 'Vídeo pago: o acesso é liberado apenas após confirmação do pagamento, com visualização protegida.'
+        : 'Vídeo disponível para consulta na biblioteca.',
+      contentHref: paid ? undefined : catalogMaterialPublicUrl('video', v.filepath),
+      payPath: paid ? `/free-content/pagar/video/${v.id}` : undefined,
       sort: new Date(v.created_at).getTime(),
     });
   }
 
   for (const d of documents) {
+    const paid = d.price_cents > 0;
     rows.push({
       id: d.id,
       type: 'ebook',
       title: d.name,
       metaLine: 'Documento',
+      priceCents: d.price_cents,
       priceLine: priceLine(d.price_cents),
-      description: 'Documento disponível para download ou consulta.',
-      href: catalogMaterialPublicUrl('document', d.filepath),
+      description: paid
+        ? 'Documento pago: o acesso é liberado apenas após confirmação do pagamento, com visualização protegida (sem download público).'
+        : 'Documento disponível para consulta ou download conforme o link.',
+      contentHref: paid ? undefined : catalogMaterialPublicUrl('document', d.filepath),
+      payPath: paid ? `/free-content/pagar/document/${d.id}` : undefined,
       sort: new Date(d.created_at).getTime(),
     });
   }
