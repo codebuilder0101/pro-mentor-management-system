@@ -179,7 +179,7 @@ export default async function Home() {
               <h3 className="text-xl font-bold mb-4 text-[#2563EB]">Liderança e adaptação</h3>
               <ul className="space-y-2 text-gray-600 text-sm leading-relaxed">
                 <li>• Postura quando o cenário muda toda hora</li>
-                <li>• Autoconhecimento sem Autoajulo vazio</li>
+                <li>• Autoconhecimento</li>
                 <li>• Feedback e conversa que não vira briga</li>
               </ul>
             </Card>
