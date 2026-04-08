@@ -92,6 +92,12 @@ export default async function CatalogPayPage({ params }: Props) {
               materialName={row.name}
             />
           </Card>
+          <p className="text-center text-sm text-gray-600 mt-6">
+            Já concluiu o pagamento?{' '}
+            <Link href={`/free-content/acesso/${kind}/${id}`} className="font-semibold text-[#2563EB] hover:underline">
+              Acessar com o email do Stripe
+            </Link>
+          </p>
         </div>
       </section>
     </div>

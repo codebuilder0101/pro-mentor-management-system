@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
+import CatalogPaySuccessSync from '@/components/free-content/CatalogPaySuccessSync';
 
 export const metadata: Metadata = {
   title: 'Pagamento concluído · Biblioteca',
@@ -30,6 +31,7 @@ export default async function CatalogPaySuccessPage({ searchParams }: Props) {
               Ref.: {sessionId}
             </p>
           ) : null}
+          <CatalogPaySuccessSync sessionId={sessionId} />
           <div className="mt-8 flex justify-center">
             <Button href="/free-content" variant="primary" size="lg" className="min-w-[220px] justify-center">
               Voltar à biblioteca

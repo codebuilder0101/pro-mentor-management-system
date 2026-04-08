@@ -2,53 +2,20 @@ import { NextResponse } from 'next/server';
 import type Stripe from 'stripe';
 import {
   blockAccessByPaymentIntent,
-  grantCatalogAccess,
   hasProcessedStripeEvent,
   insertProcessedStripeEvent,
   revokeAccessByPaymentIntent,
-  type CatalogKind,
 } from '@/lib/catalog-entitlements';
+import { grantCatalogAccessFromSession } from '@/lib/stripe-checkout-grant';
 import { getStripe } from '@/lib/stripe-server';
 
 export const runtime = 'nodejs';
 
-function parseCatalogKind(s: string | undefined): CatalogKind | null {
-  if (s === 'video' || s === 'document') return s;
-  return null;
-}
-
-function paymentIntentIdFromSession(session: Stripe.Checkout.Session): string | null {
-  const pi = session.payment_intent;
-  if (typeof pi === 'string') return pi;
-  if (pi && typeof pi === 'object' && 'id' in pi) return pi.id;
-  return null;
-}
-
 async function handlePaidCheckoutSession(session: Stripe.Checkout.Session) {
-  if (session.mode !== 'payment') return;
-
-  const kind = parseCatalogKind(session.metadata?.catalog_kind);
-  const catalogId = session.metadata?.catalog_id?.trim();
-  if (!kind || !catalogId) {
+  const result = await grantCatalogAccessFromSession(session);
+  if (!result.granted && result.reason === 'Metadados do catálogo em falta na sessão.') {
     console.warn('[stripe webhook] sessão sem metadata de catálogo', session.id);
-    return;
   }
-
-  if (session.payment_status !== 'paid') return;
-
-  const email = session.customer_details?.email ?? session.customer_email;
-  if (!email) {
-    console.warn('[stripe webhook] sessão sem email', session.id);
-    return;
-  }
-
-  await grantCatalogAccess({
-    email,
-    catalogKind: kind,
-    catalogId,
-    checkoutSessionId: session.id,
-    paymentIntentId: paymentIntentIdFromSession(session),
-  });
 }
 
 async function dispatchStripeEvent(event: Stripe.Event) {

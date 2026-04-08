@@ -123,6 +123,16 @@ export default function CatalogBrowser({ items }: Props) {
                       >
                         Pagar e acessar
                       </Link>
+                      <Link
+                        href={
+                          item.type === 'video'
+                            ? `/free-content/acesso/video/${item.id}`
+                            : `/free-content/acesso/document/${item.id}`
+                        }
+                        className="block w-full rounded-lg border-2 border-amber-200 bg-white px-6 py-3 text-center text-sm font-semibold text-amber-950 shadow-sm transition hover:bg-amber-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-400"
+                      >
+                        Já paguei — acessar
+                      </Link>
                     </div>
                   ) : item.contentHref ? (
                     <Button
