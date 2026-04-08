@@ -3,18 +3,24 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useAuth } from '@/components/auth/AuthProvider';
+
+const baseNavItems = [
+  { name: 'Quem somos', path: '/quem-somos' },
+  { name: 'Biblioteca', path: '/free-content' },
+  { name: 'Diagnóstico gratuito', path: '/schedule-session' },
+  { name: 'Mentoria', path: '/mentorship-program' },
+] as const;
+
+const adminItem = { name: 'Admin', path: '/admin' } as const;
 
 export default function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  const { loading, role, user, refresh } = useAuth();
 
-  const navItems = [
-    { name: 'Quem somos', path: '/quem-somos' },
-    { name: 'Biblioteca', path: '/free-content' },
-    { name: 'Diagnóstico gratuito', path: '/schedule-session' },
-    { name: 'Mentoria', path: '/mentorship-program' },
-    { name: 'Admin', path: '/admin' },
-  ];
+  const showAdmin = role === 'admin';
+  const navItems = showAdmin ? [...baseNavItems, adminItem] : [...baseNavItems];
 
   const isActive = (path: string) => {
     if (path === '/') {
@@ -23,38 +29,77 @@ export default function Navigation() {
     return pathname.startsWith(path);
   };
 
+  async function handleLogout() {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' });
+    } finally {
+      await refresh();
+      window.location.href = '/';
+    }
+  }
+
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          <div className="flex items-center">
-            <Link href="/" className="text-lg sm:text-xl md:text-2xl font-bold text-[#2563EB] leading-tight">
+          <div className="flex items-center min-w-0">
+            <Link href="/" className="text-lg sm:text-xl md:text-2xl font-bold text-[#2563EB] leading-tight truncate">
               Programa de Mentoria Método C.O.M.A.V
             </Link>
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex space-x-8">
-            {navItems.map((item) => (
+          <div className="hidden md:flex items-center gap-6">
+            <div className="flex space-x-6">
+              {navItems.map((item) => (
+                <Link
+                  key={item.path}
+                  href={item.path}
+                  className={`${
+                    isActive(item.path)
+                      ? 'text-[#2563EB] border-b-2 border-[#2563EB]'
+                      : 'text-gray-700 hover:text-[#2563EB]'
+                  } px-2 py-2 text-sm font-medium transition-colors whitespace-nowrap`}
+                >
+                  {item.name}
+                </Link>
+              ))}
+            </div>
+            {!loading && !user && (
               <Link
-                key={item.path}
-                href={item.path}
-                className={`${
-                  isActive(item.path)
-                    ? 'text-[#2563EB] border-b-2 border-[#2563EB]'
-                    : 'text-gray-700 hover:text-[#2563EB]'
-                } px-3 py-2 text-sm font-medium transition-colors`}
+                href="/login"
+                className="text-sm font-semibold text-[#2563EB] hover:text-blue-800 whitespace-nowrap"
               >
-                {item.name}
+                Entrar
               </Link>
-            ))}
+            )}
+            {!loading && user && (
+              <button
+                type="button"
+                onClick={() => void handleLogout()}
+                className="text-sm font-semibold text-gray-600 hover:text-gray-900 whitespace-nowrap"
+              >
+                Sair
+              </button>
+            )}
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden">
+          <div className="md:hidden flex items-center gap-2">
+            {!loading && !user && (
+              <Link href="/login" className="text-sm font-semibold text-[#2563EB]">
+                Entrar
+              </Link>
+            )}
+            {!loading && user && (
+              <button type="button" onClick={() => void handleLogout()} className="text-sm font-semibold text-gray-600">
+                Sair
+              </button>
+            )}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="text-gray-700 hover:text-[#2563EB] focus:outline-none"
+              className="text-gray-700 hover:text-[#2563EB] focus:outline-none p-1"
+              aria-label={mobileMenuOpen ? 'Fechar menu' : 'Abrir menu'}
             >
               <svg
                 className="h-6 w-6"
@@ -86,9 +131,7 @@ export default function Navigation() {
                 href={item.path}
                 onClick={() => setMobileMenuOpen(false)}
                 className={`${
-                  isActive(item.path)
-                    ? 'bg-blue-50 text-[#2563EB]'
-                    : 'text-gray-700 hover:bg-gray-50'
+                  isActive(item.path) ? 'bg-blue-50 text-[#2563EB]' : 'text-gray-700 hover:bg-gray-50'
                 } block px-3 py-2 rounded-md text-base font-medium`}
               >
                 {item.name}

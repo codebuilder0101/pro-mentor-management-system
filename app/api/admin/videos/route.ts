@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createServiceRoleClient } from '@/lib/supabase/admin';
+import { requireAdminApi } from '@/lib/auth/require-admin-api';
 
 export const runtime = 'nodejs';
 
@@ -26,6 +27,8 @@ function parseVideoBody(body: unknown): {
 }
 
 export async function GET() {
+  const gate = await requireAdminApi();
+  if (!gate.ok) return gate.response;
   try {
     const supabase = createServiceRoleClient();
     const { data, error } = await supabase
@@ -42,6 +45,8 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  const gate = await requireAdminApi();
+  if (!gate.ok) return gate.response;
   let json: unknown;
   try {
     json = await request.json();

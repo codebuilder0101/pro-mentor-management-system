@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createServiceRoleClient } from '@/lib/supabase/admin';
+import { requireAdminApi } from '@/lib/auth/require-admin-api';
 
 export const runtime = 'nodejs';
 
@@ -28,6 +29,8 @@ function parseVideoPatch(body: unknown): {
 }
 
 export async function PATCH(request: Request, ctx: Ctx) {
+  const gate = await requireAdminApi();
+  if (!gate.ok) return gate.response;
   const { id } = await ctx.params;
   if (!id) {
     return NextResponse.json({ ok: false, error: 'ID ausente.' }, { status: 400 });
@@ -66,6 +69,8 @@ export async function PATCH(request: Request, ctx: Ctx) {
 }
 
 export async function DELETE(_request: Request, ctx: Ctx) {
+  const gate = await requireAdminApi();
+  if (!gate.ok) return gate.response;
   const { id } = await ctx.params;
   if (!id) {
     return NextResponse.json({ ok: false, error: 'ID ausente.' }, { status: 400 });

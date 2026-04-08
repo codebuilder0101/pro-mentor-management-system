@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createServiceRoleClient } from '@/lib/supabase/admin';
+import { requireAdminApi } from '@/lib/auth/require-admin-api';
 import type { ArtigoTipo } from '@/lib/artigo-types';
 
 export const runtime = 'nodejs';
@@ -53,6 +54,8 @@ function parseArtigoPatch(body: unknown): Partial<{
 }
 
 export async function PATCH(request: Request, ctx: { params: Promise<{ id: string }> }) {
+  const gate = await requireAdminApi();
+  if (!gate.ok) return gate.response;
   const { id } = await ctx.params;
   let json: unknown;
   try {
@@ -80,6 +83,8 @@ export async function PATCH(request: Request, ctx: { params: Promise<{ id: strin
 }
 
 export async function DELETE(_request: Request, ctx: { params: Promise<{ id: string }> }) {
+  const gate = await requireAdminApi();
+  if (!gate.ok) return gate.response;
   const { id } = await ctx.params;
   try {
     const supabase = createServiceRoleClient();

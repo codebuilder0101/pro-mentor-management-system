@@ -1,6 +1,7 @@
 import { randomUUID } from 'crypto';
 import { NextResponse } from 'next/server';
 import { createServiceRoleClient } from '@/lib/supabase/admin';
+import { requireAdminApi } from '@/lib/auth/require-admin-api';
 
 export const runtime = 'nodejs';
 
@@ -8,6 +9,8 @@ const MAX_BYTES = 5 * 1024 * 1024;
 const ALLOWED_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif']);
 
 export async function POST(request: Request) {
+  const gate = await requireAdminApi();
+  if (!gate.ok) return gate.response;
   const contentType = request.headers.get('content-type') || '';
   if (!contentType.includes('multipart/form-data')) {
     return NextResponse.json({ ok: false, error: 'Use multipart/form-data.' }, { status: 400 });

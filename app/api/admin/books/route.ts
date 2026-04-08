@@ -1,9 +1,12 @@
 import { NextResponse } from 'next/server';
 import { createServiceRoleClient } from '@/lib/supabase/admin';
+import { requireAdminApi } from '@/lib/auth/require-admin-api';
 
 export const runtime = 'nodejs';
 
 export async function GET() {
+  const gate = await requireAdminApi();
+  if (!gate.ok) return gate.response;
   try {
     const supabase = createServiceRoleClient();
     const { data, error } = await supabase

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createServiceRoleClient } from '@/lib/supabase/admin';
+import { requireAdminApi } from '@/lib/auth/require-admin-api';
 import type { LibraryContentType, LibraryItemInsert, LibraryStatus } from '@/lib/library-types';
 
 export const runtime = 'nodejs';
@@ -94,6 +95,8 @@ function parseInsert(body: unknown): LibraryItemInsert | null {
 }
 
 export async function GET() {
+  const gate = await requireAdminApi();
+  if (!gate.ok) return gate.response;
   try {
     const supabase = createServiceRoleClient();
     const { data, error } = await supabase
@@ -111,6 +114,8 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  const gate = await requireAdminApi();
+  if (!gate.ok) return gate.response;
   let json: unknown;
   try {
     json = await request.json();
