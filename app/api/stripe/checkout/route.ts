@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import type Stripe from 'stripe';
 import { getCatalogDocumentById, getCatalogVideoById } from '@/lib/supabase/server';
 import { getStripe } from '@/lib/stripe-server';
 
@@ -16,7 +17,18 @@ function getPublicOrigin(request: Request): string {
   return 'http://localhost:3000';
 }
 
-type Body = { catalogKind?: string; catalogId?: string; customerEmail?: string };
+function parseInstallments(raw: unknown): number | null {
+  if (typeof raw === 'number' && Number.isInteger(raw) && raw >= 1 && raw <= 12) {
+    return raw;
+  }
+  if (typeof raw === 'string' && raw.trim() !== '') {
+    const n = parseInt(raw.trim(), 10);
+    if (Number.isInteger(n) && n >= 1 && n <= 12) return n;
+  }
+  return null;
+}
+
+type Body = { catalogKind?: string; catalogId?: string; customerEmail?: string; installments?: unknown };
 
 export async function POST(request: Request) {
   let json: unknown;
@@ -31,6 +43,7 @@ export async function POST(request: Request) {
   const catalogId = typeof body.catalogId === 'string' ? body.catalogId.trim() : '';
   const customerEmail =
     typeof body.customerEmail === 'string' ? body.customerEmail.trim().toLowerCase() : '';
+  const installments = parseInstallments(body.installments);
 
   if (catalogKind !== 'video' && catalogKind !== 'document') {
     return NextResponse.json({ ok: false, error: 'catalogKind inválido.' }, { status: 400 });
@@ -40,6 +53,12 @@ export async function POST(request: Request) {
   }
   if (!customerEmail || !EMAIL.test(customerEmail)) {
     return NextResponse.json({ ok: false, error: 'Email inválido.' }, { status: 400 });
+  }
+  if (installments === null) {
+    return NextResponse.json(
+      { ok: false, error: 'Quantidade de parcelas inválida. Escolha de 1 a 12.' },
+      { status: 400 }
+    );
   }
 
   try {
@@ -56,33 +75,85 @@ export async function POST(request: Request) {
     const origin = getPublicOrigin(request);
     const stripe = getStripe();
 
-    const session = await stripe.checkout.sessions.create(
-      {
-        mode: 'payment',
-        customer_email: customerEmail,
-        client_reference_id: `${catalogKind}:${catalogId}:${customerEmail}`.slice(0, 140),
-        metadata: {
-          catalog_kind: catalogKind,
-          catalog_id: catalogId,
-        },
-        line_items: [
-          {
-            price_data: {
-              currency: 'brl',
-              unit_amount: row.price_cents,
-              product_data: {
-                name: row.name.slice(0, 200),
-                description: `Acesso: ${catalogKind === 'video' ? 'vídeo' : 'documento'} (visualização protegida)`,
-              },
-            },
-            quantity: 1,
-          },
-        ],
-        success_url: `${origin}/free-content/pagar/sucesso?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${origin}/free-content/pagar/${catalogKind}/${catalogId}`,
+    const kindPt = catalogKind === 'video' ? 'vídeo' : 'documento';
+    const accessDescription = `Acesso: ${kindPt} (visualização protegida) · Parcelamento no cartão: ${installments}x`;
+
+    const baseParams: Stripe.Checkout.SessionCreateParams = {
+      mode: 'payment',
+      customer_email: customerEmail,
+      client_reference_id: `${catalogKind}:${catalogId}:${customerEmail}`.slice(0, 140),
+      metadata: {
+        catalog_kind: catalogKind,
+        catalog_id: catalogId,
+        installments: String(installments),
       },
-      { idempotencyKey: `checkout_${catalogKind}_${catalogId}_${customerEmail}`.slice(0, 255) }
-    );
+      line_items: [
+        {
+          price_data: {
+            currency: 'brl',
+            unit_amount: row.price_cents,
+            product_data: {
+              name: row.name.slice(0, 200),
+              description: accessDescription.slice(0, 500),
+            },
+          },
+          quantity: 1,
+        },
+      ],
+      success_url: `${origin}/free-content/pagar/sucesso?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${origin}/free-content/pagar/${catalogKind}/${catalogId}`,
+    };
+
+    const idemBase = `checkout_${catalogKind}_${catalogId}_${customerEmail}_i${installments}`.slice(0, 200);
+
+    /** Tipagem do Checkout só expõe `enabled`; algumas regiões aceitam `plan` na API. */
+    function installmentsOptsWithPlan(): NonNullable<Stripe.Checkout.SessionCreateParams['payment_method_options']> {
+      return {
+        card: {
+          installments: {
+            enabled: true,
+            plan: {
+              type: 'fixed_count',
+              count: installments,
+              interval: 'month',
+            },
+          } as Stripe.Checkout.SessionCreateParams.PaymentMethodOptions.Card.Installments,
+        },
+      };
+    }
+
+    function installmentsOptsEnabledOnly(): NonNullable<Stripe.Checkout.SessionCreateParams['payment_method_options']> {
+      return {
+        card: {
+          installments: { enabled: true },
+        },
+      };
+    }
+
+    let session: Stripe.Response<Stripe.Checkout.Session>;
+
+    if (installments > 1) {
+      try {
+        session = await stripe.checkout.sessions.create(
+          {
+            ...baseParams,
+            payment_method_options: installmentsOptsWithPlan(),
+          },
+          { idempotencyKey: idemBase.slice(0, 255) }
+        );
+      } catch (e) {
+        console.warn('[api/stripe/checkout] parcelamento com plano fixo rejeitado; a usar só enabled=true', e);
+        session = await stripe.checkout.sessions.create(
+          {
+            ...baseParams,
+            payment_method_options: installmentsOptsEnabledOnly(),
+          },
+          { idempotencyKey: `${idemBase}_fb`.slice(0, 255) }
+        );
+      }
+    } else {
+      session = await stripe.checkout.sessions.create(baseParams, { idempotencyKey: idemBase.slice(0, 255) });
+    }
 
     if (!session.url) {
       return NextResponse.json({ ok: false, error: 'Sessão sem URL.' }, { status: 502 });

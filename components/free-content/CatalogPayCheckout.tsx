@@ -1,31 +1,53 @@
 'use client';
 
-import { FormEvent, useState } from 'react';
+import { FormEvent, useMemo, useState } from 'react';
 import Button from '@/components/ui/Button';
+import { formatPriceBRL } from '@/lib/format-price';
 
 type Props = {
   catalogKind: 'video' | 'document';
   catalogId: string;
   amountLabel: string;
   materialName: string;
+  priceCents: number;
 };
 
 const inputClass =
   'w-full rounded-xl border border-gray-200 bg-white px-4 py-3.5 text-[15px] text-gray-900 shadow-sm placeholder:text-gray-400 transition duration-200 focus:border-[#2563EB] focus:outline-none focus:ring-4 focus:ring-blue-500/12';
+
+/** Valor exibido por parcela; centavos arredondados para cima (regra conservadora). */
+function installmentLineLabel(priceCents: number, installments: number): string {
+  if (installments <= 1) {
+    return `À vista: ${formatPriceBRL(priceCents)}`;
+  }
+  const perCents = Math.ceil(priceCents / installments);
+  return `${installments}x de ${formatPriceBRL(perCents)}`;
+}
 
 export default function CatalogPayCheckout({
   catalogKind,
   catalogId,
   amountLabel,
   materialName,
+  priceCents,
 }: Props) {
   const [email, setEmail] = useState('');
+  const [installments, setInstallments] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const installmentHint = useMemo(
+    () => installmentLineLabel(priceCents, installments),
+    [priceCents, installments]
+  );
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     setError(null);
+    if (!Number.isFinite(installments) || installments < 1 || installments > 12) {
+      setError('Selecione a quantidade de parcelas (1 a 12).');
+      return;
+    }
     setLoading(true);
     try {
       const res = await fetch('/api/stripe/checkout', {
@@ -35,6 +57,7 @@ export default function CatalogPayCheckout({
           catalogKind,
           catalogId,
           customerEmail: email.trim(),
+          installments,
         }),
       });
       const data = (await res.json()) as { ok?: boolean; url?: string; error?: string };
@@ -83,6 +106,33 @@ export default function CatalogPayCheckout({
           </p>
         </div>
 
+        <div>
+          <label
+            htmlFor="pay-installments"
+            className="mb-2 block text-sm font-semibold tracking-tight text-gray-900"
+          >
+            Quantidade de parcelas <span className="text-red-600">*</span>
+          </label>
+          <select
+            id="pay-installments"
+            name="installments"
+            required
+            value={installments}
+            onChange={(e) => setInstallments(parseInt(e.target.value, 10))}
+            className={inputClass}
+          >
+            {Array.from({ length: 12 }, (_, i) => i + 1).map((n) => (
+              <option key={n} value={n}>
+                {n}x
+              </option>
+            ))}
+          </select>
+          <p className="mt-1.5 text-xs text-gray-600">
+            <span className="font-medium text-gray-800">{installmentHint}</span>
+            <span className="text-gray-500"> · valores por parcela indicativos; confirmação final no cartão.</span>
+          </p>
+        </div>
+
         {error ? (
           <div className="rounded-xl border border-red-200/80 bg-red-50/95 px-4 py-3 text-sm text-red-900">
             {error}
@@ -97,7 +147,11 @@ export default function CatalogPayCheckout({
             className="w-full sm:flex-1 justify-center py-4 text-base font-semibold shadow-lg shadow-blue-600/25"
             disabled={loading}
           >
-            {loading ? 'A redirecionar…' : `Pagar ${amountLabel} com cartão`}
+            {loading
+              ? 'A redirecionar…'
+              : installments <= 1
+                ? `Pagar ${amountLabel} com cartão`
+                : `Pagar ${amountLabel} em ${installments}x no cartão`}
           </Button>
           <Button href="/free-content" variant="outline" size="lg" className="w-full sm:w-auto justify-center">
             Voltar à biblioteca

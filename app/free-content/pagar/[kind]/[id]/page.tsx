@@ -90,6 +90,7 @@ export default async function CatalogPayPage({ params }: Props) {
               catalogId={id}
               amountLabel={formatPriceBRL(row.price_cents)}
               materialName={row.name}
+              priceCents={row.price_cents}
             />
           </Card>
           <p className="text-center text-sm text-gray-600 mt-6">
