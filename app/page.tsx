@@ -58,13 +58,15 @@ export default async function Home() {
             </div>
             <div className="shrink-0 order-1 lg:order-2">
               <div className="relative w-56 h-56 sm:w-64 sm:h-64 mx-auto rounded-full overflow-hidden ring-4 ring-white/35 shadow-2xl bg-white/10">
-                <Image
+                {/* Native img evita mismatch de hidratação do next/image (estilos placeholder no SSR vs cliente). */}
+                <img
                   src="/image.png"
                   alt="Gustavo Máximo, mentor"
                   width={320}
                   height={320}
+                  decoding="async"
+                  fetchPriority="high"
                   className="h-full w-full object-cover object-[52%_24%] sm:object-[51%_22%]"
-                  priority
                 />
               </div>
               <p className="text-center text-blue-100 mt-4 font-semibold">Gustavo Máximo</p>
