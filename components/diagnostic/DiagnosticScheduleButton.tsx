@@ -9,7 +9,7 @@ export function useDiagnosticBookingHref(): string | null {
   const { role, user } = useAuth();
   if (role === 'admin') return null;
   if (user && role === 'user') return '/schedule-session';
-  return '/login?next=%2Fschedule-session';
+  return '/signin?next=%2Fschedule-session';
 }
 
 type ButtonProps = ComponentProps<typeof Button>;

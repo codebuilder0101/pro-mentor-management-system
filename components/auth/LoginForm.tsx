@@ -166,8 +166,9 @@ export default function LoginForm({ redirectTo }: Props) {
         {loading ? 'Entrando…' : 'Entrar'}
       </Button>
       <p className="text-center text-sm text-gray-600">
+        Não tem conta?{' '}
         <Link href={`/signup?next=${encodeURIComponent(redirectTo)}`} className="font-medium text-[#2563EB] hover:underline">
-          Criar conta
+          Ir para cadastro
         </Link>
       </p>
     </form>

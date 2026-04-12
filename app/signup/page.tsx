@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import SignupForm from '@/components/auth/SignupForm';
+import { safeInternalPath } from '@/lib/auth/safe-internal-path';
 
 export const metadata: Metadata = {
   title: 'Criar conta',
@@ -8,13 +9,6 @@ export const metadata: Metadata = {
 };
 
 type Props = { searchParams: Promise<{ next?: string }> };
-
-function safeInternalPath(next: string | undefined): string {
-  if (!next || !next.startsWith('/') || next.startsWith('//') || next.includes(':')) {
-    return '/';
-  }
-  return next;
-}
 
 export default async function SignupPage({ searchParams }: Props) {
   const { next: nextRaw } = await searchParams;
@@ -30,9 +24,13 @@ export default async function SignupPage({ searchParams }: Props) {
         <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-8">
           <SignupForm redirectTo={redirectTo} />
         </div>
-        <p className="text-center mt-6 text-sm text-gray-500">
-          <Link href="/" className="text-[#2563EB] font-medium hover:underline">
-            ← Voltar ao início
+        <p className="text-center mt-6 text-sm text-gray-600">
+          Já tem conta?{' '}
+          <Link
+            href={`/signin?next=${encodeURIComponent(redirectTo)}`}
+            className="font-medium text-[#2563EB] hover:underline"
+          >
+            Entrar
           </Link>
         </p>
       </div>

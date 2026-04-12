@@ -1,7 +1,6 @@
 'use client';
 
 import { FormEvent, useRef, useState } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/Button';
 import { authMessages } from '@/lib/auth/auth-messages-pt';
@@ -238,12 +237,6 @@ export default function SignupForm({ redirectTo }: Props) {
       <Button type="submit" variant="primary" size="lg" className="w-full justify-center" disabled={loading}>
         {loading ? 'Criando conta…' : 'Criar conta'}
       </Button>
-      <p className="text-center text-sm text-gray-600">
-        Já tem uma conta?{' '}
-        <Link href={`/login?next=${encodeURIComponent(redirectTo)}`} className="font-medium text-[#2563EB] hover:underline">
-          Entrar
-        </Link>
-      </p>
     </form>
   );
 }

@@ -10,7 +10,7 @@ export default async function ScheduleSessionLayout({ children }: { children: Re
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect('/login?next=%2Fschedule-session');
+    redirect('/signin?next=%2Fschedule-session');
   }
 
   const { data: profile } = await supabase

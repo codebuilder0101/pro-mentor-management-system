@@ -20,7 +20,7 @@ export default function AcessoNegadoPage() {
           <Button href="/" variant="primary" size="lg">
             Voltar ao início
           </Button>
-          <Button href="/login" variant="outline" size="lg">
+          <Button href="/signin" variant="outline" size="lg">
             Iniciar sessão com outra conta
           </Button>
         </div>

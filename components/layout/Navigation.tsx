@@ -22,14 +22,17 @@ export default function Navigation() {
   const diagnosticHref = useDiagnosticBookingHref();
 
   const showAdmin = role === 'admin';
-  const navItems = [
-    ...coreNavItems,
-    ...(diagnosticHref
-      ? [{ name: diagnosticNavItem.name, path: diagnosticHref } as const]
-      : []),
-    mentorshipNavItem,
-    ...(showAdmin ? [adminItem] : []),
-  ];
+  const showMainNav = Boolean(user);
+  const navItems = showMainNav
+    ? [
+        ...coreNavItems,
+        ...(diagnosticHref
+          ? [{ name: diagnosticNavItem.name, path: diagnosticHref } as const]
+          : []),
+        mentorshipNavItem,
+        ...(showAdmin ? [adminItem] : []),
+      ]
+    : [];
 
   const isActive = (path: string) => {
     const base = path.split('?')[0] ?? path;
@@ -77,7 +80,7 @@ export default function Navigation() {
             </div>
             {!loading && !user && (
               <Link
-                href="/login"
+                href="/signin"
                 className="text-sm font-semibold text-[#2563EB] hover:text-blue-800 whitespace-nowrap"
               >
                 Entrar
@@ -97,7 +100,7 @@ export default function Navigation() {
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center gap-2">
             {!loading && !user && (
-              <Link href="/login" className="text-sm font-semibold text-[#2563EB]">
+              <Link href="/signin" className="text-sm font-semibold text-[#2563EB]">
                 Entrar
               </Link>
             )}
