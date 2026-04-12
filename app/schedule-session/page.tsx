@@ -33,6 +33,7 @@ export default function ScheduleSessionPage() {
   const [scheduleResult, setScheduleResult] = useState<{
     htmlLink: string;
     meetLink: string | null;
+    sameAccountAsGuest: boolean;
   } | null>(null);
 
   const timeSlots = [
@@ -76,11 +77,21 @@ export default function ScheduleSessionPage() {
         ok?: boolean;
         error?: string;
         details?: string[];
+        eventId?: string;
         htmlLink?: string;
         meetLink?: string | null;
+        sameAccountAsGuest?: boolean;
       };
 
-      if (!res.ok || !data.ok) {
+      const eventId = data.eventId;
+      const htmlLink = data.htmlLink;
+      const hasValidEvent =
+        typeof eventId === 'string' &&
+        eventId.length > 0 &&
+        typeof htmlLink === 'string' &&
+        htmlLink.startsWith('http');
+
+      if (!res.ok || !data.ok || !hasValidEvent) {
         const detail =
           Array.isArray(data.details) && data.details.length > 0
             ? ` ${data.details.join(' ')}`
@@ -90,8 +101,9 @@ export default function ScheduleSessionPage() {
       }
 
       setScheduleResult({
-        htmlLink: data.htmlLink ?? '',
+        htmlLink,
         meetLink: data.meetLink ?? null,
+        sameAccountAsGuest: Boolean(data.sameAccountAsGuest),
       });
       setSubmitted(true);
     } catch {
@@ -132,11 +144,20 @@ export default function ScheduleSessionPage() {
                   </>
                 ) : null}
               </p>
-              <p>
-                Um convite foi enviado para{' '}
-                <strong className="font-semibold text-gray-900">{formData.email}</strong> com a data e o horário
-                solicitados. Confira também a pasta de spam.
-              </p>
+              {scheduleResult?.sameAccountAsGuest ? (
+                <p>
+                  O compromisso foi criado na <strong className="font-semibold text-gray-900">mesma conta Google</strong>{' '}
+                  usada pelo formulário (<strong className="font-semibold text-gray-900">{formData.email}</strong>). O
+                  Google <strong>não envia email de convite</strong> quando você é o organizador e o convidado ao mesmo
+                  tempo — o evento já está no seu Google Agenda. Use o link abaixo se não aparecer de imediato.
+                </p>
+              ) : (
+                <p>
+                  Um convite foi enviado para{' '}
+                  <strong className="font-semibold text-gray-900">{formData.email}</strong> com a data e o horário
+                  solicitados. Confira também a pasta de spam.
+                </p>
+              )}
               {scheduleResult?.htmlLink ? (
                 <p>
                   <a
@@ -149,21 +170,29 @@ export default function ScheduleSessionPage() {
                   </a>
                 </p>
               ) : null}
-              {scheduleResult?.meetLink ? (
-                <p>
-                  <a
-                    href={scheduleResult.meetLink}
-                    className="inline-flex items-center gap-1 font-semibold text-[#2563EB] underline decoration-blue-200 underline-offset-4 hover:decoration-[#2563EB]"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Link do Google Meet
-                  </a>
-                </p>
+              {formData.mentorshipModel === 'online' ? (
+                scheduleResult?.meetLink ? (
+                  <p>
+                    <a
+                      href={scheduleResult.meetLink}
+                      className="inline-flex items-center gap-1 font-semibold text-[#2563EB] underline decoration-blue-200 underline-offset-4 hover:decoration-[#2563EB]"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Link do Google Meet
+                    </a>
+                  </p>
+                ) : (
+                  <p className="text-gray-600">
+                    O link da videoconferência virá no convite por email. Se precisarmos ajustar o horário,
+                    entraremos em contato pelo telefone{' '}
+                    <strong className="font-semibold text-gray-900">{formData.phone}</strong>.
+                  </p>
+                )
               ) : (
                 <p className="text-gray-600">
-                  O link da videoconferência virá no convite por email. Se precisarmos ajustar o horário,
-                  entraremos em contato pelo telefone{' '}
+                  Formato <strong className="font-semibold text-gray-900">presencial</strong> — combinaremos o local ou os
+                  próximos passos pelo telefone{' '}
                   <strong className="font-semibold text-gray-900">{formData.phone}</strong>.
                 </p>
               )}

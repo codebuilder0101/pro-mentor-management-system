@@ -1,8 +1,33 @@
 import { randomUUID } from 'crypto';
 import { addMinutes } from 'date-fns';
 import { formatInTimeZone, toDate } from 'date-fns-tz';
+import type { OAuth2Client } from 'google-auth-library';
 import { google, calendar_v3 } from 'googleapis';
 import type { ValidatedSchedule } from '@/lib/schedule-validation';
+
+function formatGoogleCalendarError(err: unknown): string {
+  const e = err as {
+    response?: { status?: number; data?: { error?: { message?: string } } };
+    message?: string;
+  };
+  const status = e.response?.status;
+  const apiMsg = e.response?.data?.error?.message;
+  if (status === 401 || (apiMsg && /invalid_grant|Invalid Credentials/i.test(apiMsg))) {
+    return 'Credenciais Google inválidas ou expiradas. Acesse /api/google/auth, autorize de novo e atualize GOOGLE_REFRESH_TOKEN no servidor.';
+  }
+  if (apiMsg) return apiMsg;
+  return err instanceof Error ? err.message : 'Erro ao criar evento no Google Calendar.';
+}
+
+async function getCalendarOwnerEmail(auth: OAuth2Client): Promise<string | null> {
+  try {
+    const oauth2 = google.oauth2({ version: 'v2', auth });
+    const { data } = await oauth2.userinfo.get();
+    return data.email?.trim().toLowerCase() ?? null;
+  } catch {
+    return null;
+  }
+}
 
 function getOAuthClient() {
   const clientId = process.env.GOOGLE_CLIENT_ID;
@@ -53,6 +78,7 @@ export type CreateEventResult = {
   eventId: string;
   htmlLink: string;
   meetLink: string | null;
+  sameAccountAsGuest: boolean;
 };
 
 export async function createDiagnosticSessionEvent(data: ValidatedSchedule): Promise<CreateEventResult> {
@@ -62,6 +88,10 @@ export async function createDiagnosticSessionEvent(data: ValidatedSchedule): Pro
 
   const auth = getOAuthClient();
   const calendar = google.calendar({ version: 'v3', auth });
+
+  const organizerEmail = await getCalendarOwnerEmail(auth);
+  const sameAccountAsGuest =
+    organizerEmail !== null && organizerEmail === data.email.trim().toLowerCase();
 
   const { startDateTime, endDateTime } = eventTimeBounds(data.preferredDate, data.preferredTime, timeZone);
 
@@ -84,16 +114,41 @@ export async function createDiagnosticSessionEvent(data: ValidatedSchedule): Pro
     };
   }
 
-  const res = await calendar.events.insert({
-    calendarId,
-    requestBody,
-    conferenceDataVersion: meetEnabled ? 1 : 0,
-    sendUpdates: 'all',
-  });
+  let event: calendar_v3.Schema$Event;
+  try {
+    const res = await calendar.events.insert({
+      calendarId,
+      requestBody,
+      conferenceDataVersion: meetEnabled ? 1 : 0,
+      sendUpdates: 'all',
+    });
+    event = res.data;
+  } catch (err) {
+    throw new Error(formatGoogleCalendarError(err));
+  }
 
-  const event = res.data;
   if (!event.id || !event.htmlLink) {
-    throw new Error('Resposta inesperada da API do Google Calendar.');
+    throw new Error('Resposta inesperada da API do Google Calendar (sem id ou link).');
+  }
+
+  let verified: calendar_v3.Schema$Event;
+  try {
+    const got = await calendar.events.get({ calendarId, eventId: event.id });
+    verified = got.data;
+  } catch (err) {
+    throw new Error(
+      `Evento criado (id ${event.id}) mas não foi possível confirmar no calendário: ${formatGoogleCalendarError(err)}`
+    );
+  }
+
+  const attendeeEmails = (verified.attendees ?? [])
+    .map((a) => (a.email ?? '').trim().toLowerCase())
+    .filter(Boolean);
+  const guestListed = attendeeEmails.includes(data.email.trim().toLowerCase());
+  if (!guestListed) {
+    throw new Error(
+      'O evento foi criado, mas o email do convidado não aparece nos participantes. Verifique GOOGLE_CALENDAR_ID e se a conta tem permissão para convidar participantes.'
+    );
   }
 
   const meetLink =
@@ -103,6 +158,7 @@ export async function createDiagnosticSessionEvent(data: ValidatedSchedule): Pro
     eventId: event.id,
     htmlLink: event.htmlLink,
     meetLink,
+    sameAccountAsGuest,
   };
 }
 

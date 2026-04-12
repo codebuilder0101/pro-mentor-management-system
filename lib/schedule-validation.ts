@@ -1,3 +1,5 @@
+import { toDate } from 'date-fns-tz';
+
 const MAX_NAME = 200;
 const MAX_EMAIL = 320;
 const MAX_PHONE = 40;
@@ -80,6 +82,16 @@ export function validateSchedulePayload(input: unknown): { ok: true; data: Valid
   if (errors.length) return { ok: false, errors };
 
   const padTime = preferredTime.length === 4 ? `0${preferredTime}` : preferredTime;
+  const scheduleTz = process.env.SCHEDULE_TIMEZONE?.trim() || 'America/Sao_Paulo';
+  const startInstant = toDate(`${preferredDate}T${padTime}:00`, { timeZone: scheduleTz });
+  if (Number.isNaN(startInstant.getTime())) {
+    return { ok: false, errors: ['Data/horário inválidos para o fuso do agendamento.'] };
+  }
+  // Google Calendar does not reliably email invites for events in the past.
+  const graceMs = 60_000;
+  if (startInstant.getTime() < Date.now() - graceMs) {
+    return { ok: false, errors: ['Escolha uma data e horário futuros.'] };
+  }
 
   return {
     ok: true,

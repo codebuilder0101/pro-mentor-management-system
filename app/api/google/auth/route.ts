@@ -3,7 +3,12 @@ import { google } from 'googleapis';
 
 export const runtime = 'nodejs';
 
-const CALENDAR_EVENTS_SCOPE = 'https://www.googleapis.com/auth/calendar.events';
+/** Calendário completo + email: necessário para convites e para detectar convidado = conta conectada. */
+const OAUTH_SCOPES = [
+  'https://www.googleapis.com/auth/calendar',
+  'openid',
+  'https://www.googleapis.com/auth/userinfo.email',
+];
 
 export async function GET() {
   const clientId = process.env.GOOGLE_CLIENT_ID;
@@ -21,7 +26,7 @@ export async function GET() {
   const url = oauth2.generateAuthUrl({
     access_type: 'offline',
     prompt: 'consent',
-    scope: [CALENDAR_EVENTS_SCOPE],
+    scope: OAUTH_SCOPES,
   });
 
   return NextResponse.redirect(url);

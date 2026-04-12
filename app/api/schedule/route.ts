@@ -36,6 +36,7 @@ export async function POST(request: Request) {
       eventId: result.eventId,
       htmlLink: result.htmlLink,
       meetLink: result.meetLink,
+      sameAccountAsGuest: result.sameAccountAsGuest,
     };
     return NextResponse.json(body, { status: 201 });
   } catch (err) {
