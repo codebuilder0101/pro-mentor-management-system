@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Card from '@/components/ui/Card';
-import Button from '@/components/ui/Button';
+import { DiagnosticScheduleButton } from '@/components/diagnostic/DiagnosticScheduleButton';
 import type { ArtigoRow } from '@/lib/artigo-types';
 
 type Props = {
@@ -172,9 +172,9 @@ export default function MentorshipProgramClient({ depoimentos }: Props) {
             Cada etapa foi pensada para ampliar sua visão organizacional e impulsionar sua carreira rumo a
             novos patamares.
           </p>
-          <Button href="/schedule-session" size="lg" variant="secondary">
+          <DiagnosticScheduleButton size="lg" variant="secondary">
             Agendar sessão de diagnóstico gratuita
-          </Button>
+          </DiagnosticScheduleButton>
         </div>
       </section>
 
@@ -210,18 +210,18 @@ export default function MentorshipProgramClient({ depoimentos }: Props) {
               <p className="text-gray-600 text-sm mb-6 grow">
                 Evento interno, kickoff, convenção. Uma palestra objetiva, alinhada ao tom da sua empresa.
               </p>
-              <Button href="/schedule-session" variant="primary" className="w-full">
+              <DiagnosticScheduleButton variant="primary" className="w-full">
                 Solicitar palestra
-              </Button>
+              </DiagnosticScheduleButton>
             </Card>
             <Card className="flex flex-col border-l-4 border-green-600">
               <h3 className="text-lg font-semibold text-gray-900 mb-2">Contratar curso / treinamento</h3>
               <p className="text-gray-600 text-sm mb-6 grow">
                 Turma fechada, workshop, trilha em módulos. Foco em competências de liderança e gestão.
               </p>
-              <Button href="/schedule-session" variant="primary" className="w-full">
+              <DiagnosticScheduleButton variant="primary" className="w-full">
                 Solicitar treinamento
-              </Button>
+              </DiagnosticScheduleButton>
             </Card>
           </div>
         </div>
@@ -341,14 +341,13 @@ export default function MentorshipProgramClient({ depoimentos }: Props) {
                     </li>
                   ))}
                 </ul>
-                <Button
-                  href="/schedule-session"
+                <DiagnosticScheduleButton
                   variant={tier.highlighted ? 'primary' : 'outline'}
                   className="w-full"
                   size="lg"
                 >
                   Falar sobre este plano
-                </Button>
+                </DiagnosticScheduleButton>
               </Card>
             ))}
           </div>
@@ -388,9 +387,9 @@ export default function MentorshipProgramClient({ depoimentos }: Props) {
           <p className="text-xl mb-8 text-blue-100">
             Comece por uma sessão gratuita de entendimento e diagnóstico dos seus objetivos.
           </p>
-          <Button href="/schedule-session" size="lg" variant="secondary">
+          <DiagnosticScheduleButton size="lg" variant="secondary">
             Agendar sessão de diagnóstico
-          </Button>
+          </DiagnosticScheduleButton>
         </div>
       </section>
     </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Card from '@/components/ui/Card';
 import AdminContentSection from '@/components/admin/AdminContentSection';
 import AdminArtigosSection from '@/components/admin/AdminArtigosSection';
@@ -8,35 +8,100 @@ import AdminOverviewSection from '@/components/admin/AdminOverviewSection';
 
 type TabType = 'overview' | 'content' | 'sessions' | 'artigos';
 
+type SessionStatus = 'pending' | 'confirmed' | 'completed' | 'cancelled';
+
 interface SessionRequest {
-  id: number;
+  id: string;
   name: string;
   email: string;
   date: string;
   time: string;
-  status: 'pending' | 'confirmed' | 'completed';
+  status: SessionStatus;
+}
+
+type ApiSessionRow = {
+  id: string;
+  guest_name: string;
+  guest_email: string;
+  preferred_date: string;
+  preferred_time: string;
+  status: string;
+};
+
+function mapSessionRow(row: ApiSessionRow): SessionRequest | null {
+  const st = row.status;
+  if (st !== 'pending' && st !== 'confirmed' && st !== 'completed' && st !== 'cancelled') return null;
+  return {
+    id: row.id,
+    name: row.guest_name,
+    email: row.guest_email,
+    date: row.preferred_date,
+    time: row.preferred_time,
+    status: st,
+  };
 }
 
 export default function AdminPage() {
   const [activeTab, setActiveTab] = useState<TabType>('overview');
 
-  const [sessionRequests, setSessionRequests] = useState<SessionRequest[]>([
-    { id: 1, name: 'João Silva', email: 'joao@email.com', date: '2026-04-15', time: '10:00', status: 'pending' },
-    { id: 2, name: 'Maria Santos', email: 'maria@email.com', date: '2026-04-16', time: '14:00', status: 'confirmed' },
-    { id: 3, name: 'Pedro Costa', email: 'pedro@email.com', date: '2026-04-10', time: '09:00', status: 'completed' },
-  ]);
+  const [sessionRequests, setSessionRequests] = useState<SessionRequest[]>([]);
+  const [sessionsLoading, setSessionsLoading] = useState(false);
+  const [sessionsError, setSessionsError] = useState<string | null>(null);
+  const [updatingSessionId, setUpdatingSessionId] = useState<string | null>(null);
 
-  const updateSessionStatus = (id: number, newStatus: 'pending' | 'confirmed' | 'completed') => {
-    setSessionRequests(
-      sessionRequests.map((req) => (req.id === id ? { ...req, status: newStatus } : req))
-    );
+  const loadSessions = useCallback(async () => {
+    setSessionsLoading(true);
+    setSessionsError(null);
+    try {
+      const res = await fetch('/api/admin/diagnostic-sessions');
+      const j = (await res.json()) as { ok?: boolean; sessions?: ApiSessionRow[]; error?: string };
+      if (!res.ok || j.ok !== true || !Array.isArray(j.sessions)) {
+        throw new Error(j.error ?? 'Falha ao carregar solicitações.');
+      }
+      const mapped = j.sessions.map(mapSessionRow).filter((r): r is SessionRequest => r !== null);
+      setSessionRequests(mapped);
+    } catch (e) {
+      setSessionsError(e instanceof Error ? e.message : 'Erro ao carregar.');
+      setSessionRequests([]);
+    } finally {
+      setSessionsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (activeTab !== 'sessions') return;
+    void loadSessions();
+  }, [activeTab, loadSessions]);
+
+  const updateSessionStatus = async (id: string, newStatus: SessionStatus) => {
+    const previous = sessionRequests;
+    setUpdatingSessionId(id);
+    setSessionsError(null);
+    setSessionRequests((rows) => rows.map((req) => (req.id === id ? { ...req, status: newStatus } : req)));
+    try {
+      const res = await fetch(`/api/admin/diagnostic-sessions/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      const j = (await res.json()) as { ok?: boolean; error?: string };
+      if (!res.ok || j.ok !== true) {
+        throw new Error(j.error ?? 'Não foi possível atualizar.');
+      }
+    } catch {
+      setSessionRequests(previous);
+      setSessionsError('Não foi possível atualizar o estado. Tente novamente.');
+    } finally {
+      setUpdatingSessionId(null);
+    }
   };
 
   const getStatusBadge = (status: string) => {
     const colors = {
       pending: 'bg-yellow-100 text-yellow-800',
-      confirmed: 'bg-blue-100 text-blue-800',
-      completed: 'bg-green-100 text-green-800',
+      confirmed: 'bg-emerald-100 text-emerald-900',
+      cancelled: 'bg-red-100 text-red-800',
+      completed: 'bg-slate-200 text-slate-800',
       published: 'bg-green-100 text-green-800',
       draft: 'bg-gray-100 text-gray-800',
     };
@@ -46,7 +111,8 @@ export default function AdminPage() {
   const getStatusLabel = (status: string) => {
     const labels = {
       pending: 'Pendente',
-      confirmed: 'Confirmado',
+      confirmed: 'Aprovado',
+      cancelled: 'Rejeitado',
       completed: 'Concluído',
       published: 'Publicado',
       draft: 'Rascunho',
@@ -56,7 +122,6 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
       <section className="bg-gradient-to-r from-[#2563EB] to-blue-700 text-white py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-4xl font-bold mb-2">Painel Administrativo</h1>
@@ -64,7 +129,6 @@ export default function AdminPage() {
         </div>
       </section>
 
-      {/* Tabs */}
       <section className="bg-white border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex space-x-8">
@@ -112,74 +176,97 @@ export default function AdminPage() {
         </div>
       </section>
 
-      {/* Content */}
       <section className="py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Overview Tab */}
           {activeTab === 'overview' && <AdminOverviewSection active />}
 
-          {/* Content Tab */}
           {activeTab === 'content' && <AdminContentSection />}
 
           {activeTab === 'artigos' && <AdminArtigosSection />}
 
-          {/* Sessions Tab */}
           {activeTab === 'sessions' && (
             <div>
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold text-gray-900">Solicitações de Sessão</h2>
+                <button
+                  type="button"
+                  onClick={() => void loadSessions()}
+                  className="text-sm font-semibold text-[#2563EB] hover:text-blue-800"
+                  disabled={sessionsLoading}
+                >
+                  Atualizar
+                </button>
               </div>
+              {sessionsError ? (
+                <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+                  {sessionsError}
+                </div>
+              ) : null}
               <Card>
                 <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b">
-                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Nome</th>
-                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Email</th>
-                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Data</th>
-                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Horário</th>
-                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Status</th>
-                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Ações</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {sessionRequests.map((request) => (
-                        <tr key={request.id} className="border-b hover:bg-gray-50">
-                          <td className="py-3 px-4">{request.name}</td>
-                          <td className="py-3 px-4">{request.email}</td>
-                          <td className="py-3 px-4">
-                            {new Date(request.date).toLocaleDateString('pt-BR')}
-                          </td>
-                          <td className="py-3 px-4">{request.time}</td>
-                          <td className="py-3 px-4">
-                            <span
-                              className={`px-2 py-1 rounded-full text-xs font-semibold ${getStatusBadge(
-                                request.status
-                              )}`}
-                            >
-                              {getStatusLabel(request.status)}
-                            </span>
-                          </td>
-                          <td className="py-3 px-4">
-                            <select
-                              value={request.status}
-                              onChange={(e) =>
-                                updateSessionStatus(
-                                  request.id,
-                                  e.target.value as 'pending' | 'confirmed' | 'completed'
-                                )
-                              }
-                              className="text-sm border border-gray-300 rounded px-2 py-1"
-                            >
-                              <option value="pending">Pendente</option>
-                              <option value="confirmed">Confirmar</option>
-                              <option value="completed">Concluído</option>
-                            </select>
-                          </td>
+                  {sessionsLoading ? (
+                    <p className="p-6 text-gray-600 text-sm">Carregando…</p>
+                  ) : sessionRequests.length === 0 ? (
+                    <p className="p-6 text-gray-600 text-sm">Nenhuma solicitação registrada.</p>
+                  ) : (
+                    <table className="w-full">
+                      <thead>
+                        <tr className="border-b">
+                          <th className="text-left py-3 px-4 font-semibold text-gray-700">Nome</th>
+                          <th className="text-left py-3 px-4 font-semibold text-gray-700">Email</th>
+                          <th className="text-left py-3 px-4 font-semibold text-gray-700">Data</th>
+                          <th className="text-left py-3 px-4 font-semibold text-gray-700">Horário</th>
+                          <th className="text-left py-3 px-4 font-semibold text-gray-700">Status</th>
+                          <th className="text-left py-3 px-4 font-semibold text-gray-700">Ações</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        {sessionRequests.map((request) => (
+                          <tr key={request.id} className="border-b hover:bg-gray-50">
+                            <td className="py-3 px-4">{request.name}</td>
+                            <td className="py-3 px-4">{request.email}</td>
+                            <td className="py-3 px-4">
+                              {new Date(`${request.date}T12:00:00`).toLocaleDateString('pt-BR')}
+                            </td>
+                            <td className="py-3 px-4">{request.time}</td>
+                            <td className="py-3 px-4">
+                              <span
+                                className={`px-2 py-1 rounded-full text-xs font-semibold ${getStatusBadge(
+                                  request.status
+                                )}`}
+                              >
+                                {getStatusLabel(request.status)}
+                              </span>
+                            </td>
+                            <td className="py-3 px-4">
+                              {request.status === 'pending' ? (
+                                <div className="flex flex-wrap items-center gap-2">
+                                  <button
+                                    type="button"
+                                    disabled={updatingSessionId === request.id}
+                                    onClick={() => void updateSessionStatus(request.id, 'confirmed')}
+                                    className="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
+                                  >
+                                    Aprovar
+                                  </button>
+                                  <button
+                                    type="button"
+                                    disabled={updatingSessionId === request.id}
+                                    onClick={() => void updateSessionStatus(request.id, 'cancelled')}
+                                    className="rounded-lg border border-red-200 bg-white px-3 py-1.5 text-xs font-semibold text-red-700 shadow-sm transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
+                                  >
+                                    Rejeitar
+                                  </button>
+                                </div>
+                              ) : (
+                                <span className="text-xs text-gray-400">—</span>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
                 </div>
               </Card>
             </div>

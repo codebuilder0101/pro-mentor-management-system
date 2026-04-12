@@ -4,29 +4,39 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/components/auth/AuthProvider';
+import { useDiagnosticBookingHref } from '@/components/diagnostic/DiagnosticScheduleButton';
 
-const baseNavItems = [
+const coreNavItems = [
   { name: 'Quem somos', path: '/quem-somos' },
   { name: 'Biblioteca', path: '/free-content' },
-  { name: 'Diagnóstico gratuito', path: '/schedule-session' },
-  { name: 'Mentoria', path: '/mentorship-program' },
 ] as const;
 
+const diagnosticNavItem = { name: 'Diagnóstico gratuito' } as const;
+const mentorshipNavItem = { name: 'Mentoria', path: '/mentorship-program' } as const;
 const adminItem = { name: 'Admin', path: '/admin' } as const;
 
 export default function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
   const { loading, role, user, refresh } = useAuth();
+  const diagnosticHref = useDiagnosticBookingHref();
 
   const showAdmin = role === 'admin';
-  const navItems = showAdmin ? [...baseNavItems, adminItem] : [...baseNavItems];
+  const navItems = [
+    ...coreNavItems,
+    ...(diagnosticHref
+      ? [{ name: diagnosticNavItem.name, path: diagnosticHref } as const]
+      : []),
+    mentorshipNavItem,
+    ...(showAdmin ? [adminItem] : []),
+  ];
 
   const isActive = (path: string) => {
-    if (path === '/') {
+    const base = path.split('?')[0] ?? path;
+    if (base === '/') {
       return pathname === '/';
     }
-    return pathname.startsWith(path);
+    return pathname.startsWith(base);
   };
 
   async function handleLogout() {

@@ -1,6 +1,5 @@
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale/pt-BR';
-import { countUpcomingDiagnosticEvents } from '@/lib/calendar-service';
 import { createServiceRoleClient } from '@/lib/supabase/admin';
 
 export type DashboardRecentItem = {
@@ -20,7 +19,7 @@ export type AdminDashboardPayload = {
   metrics: {
     totalUsers: number | null;
     publishedContent: number;
-    /** Futuros no Google Calendar (diagnóstico); null se a API não estiver disponível. */
+    /** Pedidos de diagnóstico pendentes ou confirmados (Supabase). */
     scheduledSessions: number | null;
     /** % de itens da biblioteca + mídia em estado publicado (entre publicado + rascunho). */
     completionRatePercent: number | null;
@@ -62,6 +61,20 @@ async function countAuthUsers(): Promise<number | null> {
       page += 1;
     }
     return total;
+  } catch {
+    return null;
+  }
+}
+
+async function countDiagnosticSessionRequestsOpen(): Promise<number | null> {
+  try {
+    const supabase = createServiceRoleClient();
+    const { count, error } = await supabase
+      .from('diagnostic_session_requests')
+      .select('id', { count: 'exact', head: true })
+      .in('status', ['pending', 'confirmed']);
+    if (error) return null;
+    return count ?? 0;
   } catch {
     return null;
   }
@@ -187,7 +200,7 @@ export async function getAdminDashboardPayload(): Promise<AdminDashboardPayload>
     await Promise.all([
       countAuthUsers(),
       countPublishedContentAggregate(),
-      countUpcomingDiagnosticEvents(),
+      countDiagnosticSessionRequestsOpen(),
       publicationCompletionPercent(),
       buildRecentActivity(8),
       buildTopContent(8),
@@ -198,7 +211,7 @@ export async function getAdminDashboardPayload(): Promise<AdminDashboardPayload>
   }
   if (scheduledSessions === null) {
     warnings.push(
-      'Sessões agendadas: Google Calendar indisponível ou não configurado; o valor não foi carregado.'
+      'Sessões agendadas: não foi possível ler a tabela diagnostic_session_requests (verifique migrações e permissões).'
     );
   }
 

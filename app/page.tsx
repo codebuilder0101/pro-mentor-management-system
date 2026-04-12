@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
+import { DiagnosticScheduleButton } from '@/components/diagnostic/DiagnosticScheduleButton';
 import { fetchPublishedDepoimentos } from '@/lib/supabase/server';
 
 /* Foto: coloque o arquivo em public/ (ex.: gustavoimage.jpg) e use src="/gustavoimage.jpg" — nunca use o prefixo /public/ na URL. */
@@ -220,9 +221,9 @@ export default async function Home() {
                 Evento interno, convenção, encontro de liderança. Uma palestra bem montada vira
                 conversa — não auditório adormecido.
               </p>
-              <Button href="/schedule-session" size="md" variant="primary" className="w-full">
+              <DiagnosticScheduleButton size="md" variant="primary" className="w-full">
                 Pedir orçamento de palestra
-              </Button>
+              </DiagnosticScheduleButton>
             </Card>
             <Card hover className="border-l-4 border-green-600 flex flex-col">
               <div className="text-4xl mb-3">🎓</div>
@@ -231,9 +232,9 @@ export default async function Home() {
                 Workshop, trilha em turma, imersão. Foco em competências de liderança, gestão e
                 desenvolvimento — no ritmo da sua empresa.
               </p>
-              <Button href="/schedule-session" size="md" variant="primary" className="w-full">
+              <DiagnosticScheduleButton size="md" variant="primary" className="w-full">
                 Pedir proposta de treinamento
-              </Button>
+              </DiagnosticScheduleButton>
             </Card>
           </div>
         </div>
@@ -278,9 +279,9 @@ export default async function Home() {
             a mentoria (ou outro formato) encaixa.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button href="/schedule-session" size="lg" variant="secondary">
+            <DiagnosticScheduleButton size="lg" variant="secondary">
               Agendar sessão de diagnóstico
-            </Button>
+            </DiagnosticScheduleButton>
             <Button
               href="/mentorship-program"
               size="lg"

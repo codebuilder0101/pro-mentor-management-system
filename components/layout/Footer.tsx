@@ -1,5 +1,5 @@
 import React from 'react';
-import Link from 'next/link';
+import FooterQuickLinks from '@/components/layout/FooterQuickLinks';
 
 export default function Footer() {
   return (
@@ -14,31 +14,7 @@ export default function Footer() {
             </p>
           </div>
 
-          <div>
-            <h4 className="text-lg font-semibold text-white mb-4">Links rápidos</h4>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <Link href="/quem-somos" className="hover:text-white transition-colors">
-                  Quem somos
-                </Link>
-              </li>
-              <li>
-                <Link href="/free-content" className="hover:text-white transition-colors">
-                  Biblioteca
-                </Link>
-              </li>
-              <li>
-                <Link href="/schedule-session" className="hover:text-white transition-colors">
-                  Diagnóstico gratuito
-                </Link>
-              </li>
-              <li>
-                <Link href="/mentorship-program" className="hover:text-white transition-colors">
-                  Programa de mentoria
-                </Link>
-              </li>
-            </ul>
-          </div>
+          <FooterQuickLinks />
 
           <div>
             <h4 className="text-lg font-semibold text-white mb-4">Contato</h4>

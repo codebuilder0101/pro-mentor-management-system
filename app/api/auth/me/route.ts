@@ -20,7 +20,9 @@ export async function GET() {
       .eq('id', user.id)
       .maybeSingle();
 
-    const role = profile?.role === 'admin' ? 'admin' : 'user';
+    let role: 'admin' | 'user' | null = null;
+    if (profile?.role === 'admin') role = 'admin';
+    else if (profile?.role === 'user') role = 'user';
 
     return NextResponse.json({
       user: { id: user.id, email: user.email ?? null },

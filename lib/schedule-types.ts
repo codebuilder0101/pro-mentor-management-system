@@ -11,11 +11,7 @@ export type ScheduleRequestBody = {
 
 export type ScheduleSuccessResponse = {
   ok: true;
-  eventId: string;
-  htmlLink: string;
-  meetLink: string | null;
-  /** True when o email do formulário é o mesmo da conta Google conectada ao site (o Google não envia convite por email para si mesmo). */
-  sameAccountAsGuest: boolean;
+  id: string;
 };
 
 export type ScheduleErrorResponse = {

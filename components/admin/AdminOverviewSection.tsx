@@ -64,7 +64,7 @@ export default function AdminOverviewSection({ active }: Props) {
     {
       label: 'Sessões agendadas',
       value: fmtInt(data?.metrics.scheduledSessions ?? null),
-      hint: 'Eventos futuros no Google Calendar (diagnóstico)',
+      hint: 'Pedidos de sessão de diagnóstico (pendentes ou confirmados) na base de dados',
       icon: '📅',
     },
     {
