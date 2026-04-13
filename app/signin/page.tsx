@@ -7,11 +7,12 @@ export const metadata: Metadata = {
   description: 'Acesse sua conta com email e senha.',
 };
 
-type Props = { searchParams: Promise<{ next?: string }> };
+type Props = { searchParams: Promise<{ next?: string; registered?: string }> };
 
 export default async function SignInPage({ searchParams }: Props) {
-  const { next: nextRaw } = await searchParams;
+  const { next: nextRaw, registered } = await searchParams;
   const redirectTo = safeInternalPath(nextRaw);
+  const showRegisteredNotice = registered === '1' || registered === 'true';
 
   return (
     <div className="min-h-[70vh] bg-gray-50 py-16 px-4">
@@ -21,6 +22,15 @@ export default async function SignInPage({ searchParams }: Props) {
           Use o email e a senha definidos no cadastro. O painel administrativo fica reservado a perfis com
           papel <strong>admin</strong>.
         </p>
+        {showRegisteredNotice ? (
+          <div
+            className="mb-6 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900"
+            role="status"
+          >
+            Conta criada com sucesso. Se recebeu um email de confirmação do Supabase, abra o link antes de
+            entrar. Caso contrário, use email e senha abaixo.
+          </div>
+        ) : null}
         <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-8">
           <LoginForm redirectTo={redirectTo} />
         </div>

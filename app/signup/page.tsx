@@ -19,7 +19,9 @@ export default async function SignupPage({ searchParams }: Props) {
       <div className="max-w-lg mx-auto">
         <h1 className="text-2xl font-bold text-gray-900 text-center mb-2">Criar conta</h1>
         <p className="text-center text-gray-600 text-sm mb-8">
-          Escolha um email e uma senha forte. Você será conectado automaticamente após concluir o cadastro.
+          Escolha um email e uma senha forte. Depois de criar a conta, você será direcionado para a página de
+          entrar. Se o projeto exigir confirmação por email (Supabase Auth), verifique a caixa de entrada e o
+          spam.
         </p>
         <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-8">
           <SignupForm redirectTo={redirectTo} />

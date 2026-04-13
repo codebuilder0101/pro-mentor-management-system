@@ -17,7 +17,7 @@ export default function AcessoNegadoPage() {
           administrador.
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center pt-4">
-          <Button href="/" variant="primary" size="lg">
+          <Button href="/dashboard" variant="primary" size="lg">
             Voltar ao início
           </Button>
           <Button href="/signin" variant="outline" size="lg">

@@ -20,7 +20,7 @@ export default async function ScheduleSessionLayout({ children }: { children: Re
     .maybeSingle();
 
   if (profile?.role !== 'user') {
-    redirect('/');
+    redirect('/dashboard');
   }
 
   return <>{children}</>;

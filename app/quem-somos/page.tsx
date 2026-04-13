@@ -128,7 +128,7 @@ export default function QuemSomosPage() {
             <Button href="/mentorship-program" size="lg" variant="primary">
               Ver programa de mentoria
             </Button>
-            <Button href="/" size="lg" variant="outline">
+            <Button href="/dashboard" size="lg" variant="outline">
               Voltar ao início
             </Button>
           </div>

@@ -27,7 +27,8 @@ export default function Button({
   rel,
   disabled = false,
 }: ButtonProps) {
-  const baseStyles = 'font-semibold rounded-lg transition-all duration-200 inline-flex items-center justify-center';
+  const baseStyles =
+    'cursor-pointer font-semibold rounded-lg transition-all duration-200 inline-flex items-center justify-center';
 
   const variants = {
     primary: 'bg-[#2563EB] hover:bg-blue-700 text-white shadow-md hover:shadow-lg',
@@ -41,7 +42,7 @@ export default function Button({
     lg: 'px-8 py-4 text-lg',
   };
 
-  const disabledClass = disabled ? ' opacity-60 pointer-events-none cursor-not-allowed' : '';
+  const disabledClass = disabled ? ' cursor-not-allowed opacity-60 pointer-events-none' : '';
   const mergedClassName = `${baseStyles} ${variants[variant]} ${sizes[size]}${disabledClass} ${className}`;
 
   if (href) {

@@ -16,7 +16,7 @@ export async function GET() {
 
     const { data: profile } = await supabase
       .from('profiles')
-      .select('role')
+      .select('role, username')
       .eq('id', user.id)
       .maybeSingle();
 
@@ -24,8 +24,19 @@ export async function GET() {
     if (profile?.role === 'admin') role = 'admin';
     else if (profile?.role === 'user') role = 'user';
 
+    const meta = user.user_metadata as Record<string, unknown> | undefined;
+    const metaName =
+      typeof meta?.full_name === 'string'
+        ? meta.full_name.trim()
+        : typeof meta?.name === 'string'
+          ? meta.name.trim()
+          : '';
+    const profileUsername =
+      typeof profile?.username === 'string' ? profile.username.trim() : '';
+    const name = profileUsername || metaName || null;
+
     return NextResponse.json({
-      user: { id: user.id, email: user.email ?? null },
+      user: { id: user.id, email: user.email ?? null, name },
       role,
     });
   } catch (e) {

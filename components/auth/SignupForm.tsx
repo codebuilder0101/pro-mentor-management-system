@@ -129,7 +129,8 @@ export default function SignupForm({ redirectTo }: Props) {
         return;
       }
       await refresh();
-      router.push(redirectTo);
+      const nextParam = encodeURIComponent(redirectTo);
+      router.push(`/signin?registered=1&next=${nextParam}`);
       router.refresh();
     } catch {
       setFormError(authMessages.generic);

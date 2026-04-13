@@ -13,7 +13,7 @@ import {
 export type AppRole = 'admin' | 'user';
 
 type MeResponse = {
-  user: { id: string; email: string | null } | null;
+  user: { id: string; email: string | null; name?: string | null } | null;
   role: AppRole | null;
   ok?: boolean;
   error?: string;
@@ -21,7 +21,7 @@ type MeResponse = {
 
 type AuthContextValue = {
   loading: boolean;
-  user: { id: string; email: string | null } | null;
+  user: { id: string; email: string | null; name?: string | null } | null;
   role: AppRole | null;
   refresh: () => Promise<void>;
 };
@@ -30,7 +30,7 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<{ id: string; email: string | null } | null>(null);
+  const [user, setUser] = useState<{ id: string; email: string | null; name?: string | null } | null>(null);
   const [role, setRole] = useState<AppRole | null>(null);
 
   const refresh = useCallback(async () => {

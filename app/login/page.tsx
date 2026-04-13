@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation';
-import { safeInternalPath } from '@/lib/auth/safe-internal-path';
+import { DEFAULT_POST_AUTH_PATH, safeInternalPath } from '@/lib/auth/safe-internal-path';
 
 type Props = { searchParams: Promise<{ next?: string }> };
 
@@ -7,6 +7,7 @@ type Props = { searchParams: Promise<{ next?: string }> };
 export default async function LegacyLoginPage({ searchParams }: Props) {
   const { next: nextRaw } = await searchParams;
   const next = safeInternalPath(nextRaw);
-  const qs = next === '/' ? '' : `?next=${encodeURIComponent(next)}`;
+  const qs =
+    next === DEFAULT_POST_AUTH_PATH && !nextRaw ? '' : `?next=${encodeURIComponent(next)}`;
   redirect(`/signin${qs}`);
 }

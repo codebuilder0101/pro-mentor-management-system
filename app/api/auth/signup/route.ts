@@ -1,3 +1,4 @@
+import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 import { authMessages } from '@/lib/auth/auth-messages-pt';
 import {
@@ -6,7 +7,6 @@ import {
   isValidPasswordStrength,
 } from '@/lib/auth/credentials';
 import { createServiceRoleClient } from '@/lib/supabase/admin';
-import { createSupabaseCookieClient } from '@/lib/supabase/ssr-server';
 
 export const runtime = 'nodejs';
 
@@ -43,6 +43,12 @@ export async function POST(request: Request) {
 
   const email = normalizeEmail(emailRaw);
 
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !anonKey) {
+    return NextResponse.json({ ok: false, error: authMessages.generic }, { status: 503 });
+  }
+
   try {
     const service = createServiceRoleClient();
 
@@ -55,14 +61,25 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: false, error: authMessages.emailTaken }, { status: 409 });
     }
 
-    const { error: createErr } = await service.auth.admin.createUser({
-      email,
-      password,
-      email_confirm: true,
+    const origin = new URL(request.url).origin;
+    const emailRedirectTo = `${origin}/signin`;
+
+    const authClient = createClient(url, anonKey, {
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+        detectSessionInUrl: false,
+      },
     });
 
-    if (createErr) {
-      const msg = createErr.message?.toLowerCase() ?? '';
+    const { error: signUpErr } = await authClient.auth.signUp({
+      email,
+      password,
+      options: { emailRedirectTo },
+    });
+
+    if (signUpErr) {
+      const msg = signUpErr.message?.toLowerCase() ?? '';
       if (
         msg.includes('already') ||
         msg.includes('registered') ||
@@ -71,15 +88,8 @@ export async function POST(request: Request) {
       ) {
         return NextResponse.json({ ok: false, error: authMessages.emailTaken }, { status: 409 });
       }
-      console.error('[api/auth/signup] createUser', createErr);
+      console.error('[api/auth/signup] signUp', signUpErr);
       return NextResponse.json({ ok: false, error: authMessages.generic }, { status: 400 });
-    }
-
-    const supabase = await createSupabaseCookieClient();
-    const { error: signErr } = await supabase.auth.signInWithPassword({ email, password });
-    if (signErr) {
-      console.error('[api/auth/signup] signIn after create', signErr);
-      return NextResponse.json({ ok: false, error: authMessages.generic }, { status: 502 });
     }
 
     return NextResponse.json({ ok: true }, { status: 201 });
