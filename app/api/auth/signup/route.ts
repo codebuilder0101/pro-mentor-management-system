@@ -10,7 +10,7 @@ import { createServiceRoleClient } from '@/lib/supabase/admin';
 
 export const runtime = 'nodejs';
 
-type Body = { email?: string; password?: string; confirmPassword?: string };
+type Body = { name?: string; email?: string; password?: string; confirmPassword?: string };
 
 export async function POST(request: Request) {
   let json: unknown;
@@ -21,9 +21,14 @@ export async function POST(request: Request) {
   }
 
   const body = json as Body;
+  const fullName = typeof body.name === 'string' ? body.name.trim() : '';
   const emailRaw = typeof body.email === 'string' ? body.email : '';
   const password = typeof body.password === 'string' ? body.password : '';
   const confirmPassword = typeof body.confirmPassword === 'string' ? body.confirmPassword : '';
+
+  if (!fullName) {
+    return NextResponse.json({ ok: false, error: 'Informe seu nome completo.' }, { status: 400 });
+  }
 
   if (!emailRaw.trim()) {
     return NextResponse.json({ ok: false, error: authMessages.emailRequired }, { status: 400 });
@@ -72,10 +77,13 @@ export async function POST(request: Request) {
       },
     });
 
-    const { error: signUpErr } = await authClient.auth.signUp({
+    const { data: signUpData, error: signUpErr } = await authClient.auth.signUp({
       email,
       password,
-      options: { emailRedirectTo },
+      options: {
+        emailRedirectTo,
+        data: { full_name: fullName },
+      },
     });
 
     if (signUpErr) {
@@ -90,6 +98,17 @@ export async function POST(request: Request) {
       }
       console.error('[api/auth/signup] signUp', signUpErr);
       return NextResponse.json({ ok: false, error: authMessages.generic }, { status: 400 });
+    }
+
+    const newUserId = signUpData.user?.id;
+    if (newUserId) {
+      const { error: profileErr } = await service
+        .from('profiles')
+        .update({ full_name: fullName, email })
+        .eq('id', newUserId);
+      if (profileErr) {
+        console.warn('[api/auth/signup] profiles full_name sync', profileErr);
+      }
     }
 
     return NextResponse.json({ ok: true }, { status: 201 });

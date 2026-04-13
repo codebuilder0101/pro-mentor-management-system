@@ -18,6 +18,7 @@ const inputNeutral = `${inputBase} border-gray-200 focus:border-[#2563EB] focus:
 const inputInvalid = `${inputBase} border-red-500 focus:border-red-600 focus:ring-red-500/15`;
 
 type FieldErrors = {
+  name?: string;
   email?: string;
   password?: string;
   confirmPassword?: string;
@@ -35,9 +36,11 @@ function getEmailFieldError(raw: string): string | undefined {
 export default function SignupForm({ redirectTo }: Props) {
   const router = useRouter();
   const { refresh } = useAuth();
+  const nameRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const confirmRef = useRef<HTMLInputElement>(null);
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -69,6 +72,7 @@ export default function SignupForm({ redirectTo }: Props) {
 
   function validateForSubmit(): boolean {
     const next: FieldErrors = {};
+    if (!name.trim()) next.name = 'Informe seu nome completo.';
     const emailErr = getEmailFieldError(email);
     if (emailErr) next.email = emailErr;
     if (!password) {
@@ -81,7 +85,8 @@ export default function SignupForm({ redirectTo }: Props) {
     }
     setFieldErrors(next);
     setFormError(null);
-    if (next.email) emailRef.current?.focus();
+    if (next.name) nameRef.current?.focus();
+    else if (next.email) emailRef.current?.focus();
     else if (next.password) passwordRef.current?.focus();
     else if (next.confirmPassword) confirmRef.current?.focus();
     return Object.keys(next).length === 0;
@@ -97,6 +102,7 @@ export default function SignupForm({ redirectTo }: Props) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          name: name.trim(),
           email: normalizeEmail(email),
           password,
           confirmPassword,
@@ -141,6 +147,38 @@ export default function SignupForm({ redirectTo }: Props) {
 
   return (
     <form onSubmit={onSubmit} className="space-y-4 max-w-md mx-auto w-full" noValidate>
+      <div>
+        <label htmlFor="signup-name" className="mb-2 block text-sm font-semibold text-gray-900">
+          Nome completo
+        </label>
+        <input
+          ref={nameRef}
+          id="signup-name"
+          name="name"
+          type="text"
+          autoComplete="name"
+          required
+          aria-required="true"
+          aria-invalid={!!fieldErrors.name}
+          aria-describedby={fieldErrors.name ? 'signup-name-error' : undefined}
+          value={name}
+          onChange={(e) => {
+            setName(e.target.value);
+            setFieldErrors((f) => {
+              if (!f.name) return f;
+              const n = { ...f };
+              if (e.target.value.trim()) delete n.name;
+              return n;
+            });
+          }}
+          className={fieldErrors.name ? inputInvalid : inputNeutral}
+        />
+        {fieldErrors.name ? (
+          <p id="signup-name-error" className="mt-1.5 text-sm text-red-700" role="alert">
+            {fieldErrors.name}
+          </p>
+        ) : null}
+      </div>
       <div>
         <label htmlFor="signup-email" className="mb-2 block text-sm font-semibold text-gray-900">
           Email

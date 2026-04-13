@@ -16,7 +16,7 @@ export async function GET() {
 
     const { data: profile } = await supabase
       .from('profiles')
-      .select('role, username')
+      .select('role, username, full_name')
       .eq('id', user.id)
       .maybeSingle();
 
@@ -31,9 +31,11 @@ export async function GET() {
         : typeof meta?.name === 'string'
           ? meta.name.trim()
           : '';
+    const profileFullName =
+      typeof profile?.full_name === 'string' ? profile.full_name.trim() : '';
     const profileUsername =
       typeof profile?.username === 'string' ? profile.username.trim() : '';
-    const name = profileUsername || metaName || null;
+    const name = profileFullName || profileUsername || metaName || null;
 
     return NextResponse.json({
       user: { id: user.id, email: user.email ?? null, name },

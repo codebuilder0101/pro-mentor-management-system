@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/components/auth/AuthProvider';
@@ -26,9 +26,31 @@ function navUserLabel(user: { email: string | null; name?: string | null }): str
   return 'Utilizador';
 }
 
+function userInitials(user: { email: string | null; name?: string | null }): string {
+  const n = user.name?.trim();
+  if (n) {
+    const parts = n.split(/\s+/).filter(Boolean);
+    if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    return n.slice(0, 2).toUpperCase();
+  }
+  const e = user.email?.trim();
+  if (e) {
+    const local = e.split('@')[0] ?? '';
+    return local.slice(0, 2).toUpperCase();
+  }
+  return 'U';
+}
+
+function roleLabel(role: string | null): string {
+  if (role === 'admin') return 'Administrador';
+  return 'Mentorado';
+}
+
 export default function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const { loading, role, user, refresh } = useAuth();
   const diagnosticHref = useDiagnosticBookingHref();
@@ -48,6 +70,22 @@ export default function Navigation() {
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, [solidNavPaths, pathname]);
+
+  useEffect(() => {
+    setUserMenuOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
+        setUserMenuOpen(false);
+      }
+    }
+    if (userMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [userMenuOpen]);
 
   const showAdmin = role === 'admin';
   const showMainNav = Boolean(user);
@@ -134,56 +172,81 @@ export default function Navigation() {
             </Link>
           )}
           {!loading && user && (
-            <div className="flex min-w-0 max-w-[min(100vw-5rem,20rem)] items-center gap-2 sm:max-w-[min(100vw-6rem,26rem)] sm:gap-3 md:max-w-none">
-              <div className="min-w-0 flex-1 text-right">
-                <p
-                  className={`truncate text-sm font-semibold tracking-tight sm:text-[0.9375rem] ${
-                    glassTop ? 'text-white' : 'text-slate-900'
-                  }`}
-                  title={user.email ?? undefined}
-                >
-                  {navUserLabel(user)}
-                </p>
-                {user.email ? (
-                  <p
-                    className={`mt-0.5 hidden truncate text-xs font-normal sm:block sm:max-w-[9rem] md:max-w-[14rem] lg:max-w-[16rem] ${
-                      glassTop ? 'text-white/75' : 'text-slate-500'
-                    }`}
-                    title={user.email}
-                  >
-                    {user.email}
-                  </p>
-                ) : null}
-              </div>
+            <div ref={userMenuRef} className="relative">
               <button
                 type="button"
-                onClick={() => void handleLogout()}
-                className={`group inline-flex shrink-0 cursor-pointer items-center gap-2 rounded-full border px-3 py-2 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 ${
+                onClick={() => setUserMenuOpen((v) => !v)}
+                className={`group flex cursor-pointer items-center gap-2.5 rounded-full border px-2 py-1.5 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 sm:px-3 ${
                   glassTop
-                    ? 'border-white/70 bg-white/10 text-white hover:bg-white/20'
-                    : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50'
+                    ? 'border-white/30 bg-white/10 hover:bg-white/20'
+                    : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50'
                 }`}
               >
-                <svg
-                  className={`h-4 w-4 shrink-0 transition ${
+                <span
+                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
                     glassTop
-                      ? 'text-white/80 group-hover:text-white'
-                      : 'text-slate-500 group-hover:text-slate-700'
+                      ? 'bg-white/20 text-white'
+                      : 'bg-[#2563EB]/10 text-[#2563EB]'
                   }`}
+                >
+                  {userInitials(user)}
+                </span>
+                <span className="hidden min-w-0 text-left sm:block">
+                  <span
+                    className={`block max-w-[8rem] truncate text-sm font-semibold leading-tight ${
+                      glassTop ? 'text-white' : 'text-slate-900'
+                    }`}
+                  >
+                    {navUserLabel(user)}
+                  </span>
+                  <span
+                    className={`block text-xs leading-tight ${
+                      glassTop ? 'text-white/70' : 'text-slate-500'
+                    }`}
+                  >
+                    {roleLabel(role)}
+                  </span>
+                </span>
+                <svg
+                  className={`h-4 w-4 shrink-0 transition-transform ${
+                    userMenuOpen ? 'rotate-180' : ''
+                  } ${glassTop ? 'text-white/70' : 'text-slate-400'}`}
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
                   strokeWidth={2}
                   aria-hidden
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                  />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                 </svg>
-                Sair
               </button>
+
+              {userMenuOpen && (
+                <div className="absolute right-0 top-full z-50 mt-2 w-56 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg">
+                  <div className="border-b border-slate-100 px-4 py-3">
+                    <p className="truncate text-sm font-semibold text-slate-900">
+                      {navUserLabel(user)}
+                    </p>
+                    {user.email && (
+                      <p className="mt-0.5 truncate text-xs text-slate-500" title={user.email}>
+                        {user.email}
+                      </p>
+                    )}
+                  </div>
+                  <div className="py-1">
+                    <button
+                      type="button"
+                      onClick={() => { setUserMenuOpen(false); void handleLogout(); }}
+                      className="flex w-full cursor-pointer items-center gap-2.5 px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                    >
+                      <svg className="h-4 w-4 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                      </svg>
+                      Sair
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
           <button
