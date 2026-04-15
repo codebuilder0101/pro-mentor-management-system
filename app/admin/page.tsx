@@ -48,6 +48,10 @@ export default function AdminPage() {
   const [sessionsLoading, setSessionsLoading] = useState(false);
   const [sessionsError, setSessionsError] = useState<string | null>(null);
   const [updatingSessionId, setUpdatingSessionId] = useState<string | null>(null);
+  const [approveTarget, setApproveTarget] = useState<SessionRequest | null>(null);
+  const [approveSubmitting, setApproveSubmitting] = useState(false);
+  const [approveError, setApproveError] = useState<string | null>(null);
+  const [approveSuccess, setApproveSuccess] = useState<{ eventUrl: string | null; warning: string | null } | null>(null);
 
   const loadSessions = useCallback(async () => {
     setSessionsLoading(true);
@@ -95,6 +99,57 @@ export default function AdminPage() {
       setUpdatingSessionId(null);
     }
   };
+
+  const openApproveModal = (request: SessionRequest) => {
+    setApproveError(null);
+    setApproveSuccess(null);
+    setApproveTarget(request);
+  };
+
+  const closeApproveModal = () => {
+    if (approveSubmitting) return;
+    setApproveTarget(null);
+    setApproveError(null);
+    setApproveSuccess(null);
+  };
+
+  const confirmApprove = async () => {
+    if (!approveTarget) return;
+    const target = approveTarget;
+    setApproveSubmitting(true);
+    setApproveError(null);
+    setUpdatingSessionId(target.id);
+    try {
+      const res = await fetch(`/api/admin/diagnostic-sessions/${target.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'confirmed' }),
+      });
+      const j = (await res.json()) as {
+        ok?: boolean;
+        error?: string;
+        calendarEventUrl?: string | null;
+        calendarWarning?: string | null;
+      };
+      if (!res.ok || j.ok !== true) {
+        throw new Error(j.error ?? 'Não foi possível aprovar.');
+      }
+      setSessionRequests((rows) =>
+        rows.map((req) => (req.id === target.id ? { ...req, status: 'confirmed' } : req))
+      );
+      setApproveSuccess({
+        eventUrl: j.calendarEventUrl ?? null,
+        warning: j.calendarWarning ?? null,
+      });
+    } catch (e) {
+      setApproveError(e instanceof Error ? e.message : 'Erro ao aprovar.');
+    } finally {
+      setApproveSubmitting(false);
+      setUpdatingSessionId(null);
+    }
+  };
+
+  const formatDatePtBr = (iso: string) => new Date(`${iso}T12:00:00`).toLocaleDateString('pt-BR');
 
   const getStatusBadge = (status: string) => {
     const colors = {
@@ -244,7 +299,7 @@ export default function AdminPage() {
                                   <button
                                     type="button"
                                     disabled={updatingSessionId === request.id}
-                                    onClick={() => void updateSessionStatus(request.id, 'confirmed')}
+                                    onClick={() => openApproveModal(request)}
                                     className="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
                                   >
                                     Aprovar
@@ -273,6 +328,107 @@ export default function AdminPage() {
           )}
         </div>
       </section>
+
+      {approveTarget ? (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="approve-modal-title"
+        >
+          <div className="w-full max-w-md rounded-2xl bg-white shadow-xl">
+            <div className="border-b px-6 py-4">
+              <h3 id="approve-modal-title" className="text-lg font-semibold text-gray-900">
+                Confirmar agendamento
+              </h3>
+              <p className="mt-1 text-sm text-gray-600">
+                Um evento será criado no Google Calendar do administrador e um convite enviado ao participante.
+              </p>
+            </div>
+
+            <div className="px-6 py-4 text-sm">
+              {approveSuccess ? (
+                <div className="space-y-3">
+                  <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-emerald-800">
+                    Sessão aprovada com sucesso.
+                    {approveSuccess.eventUrl ? (
+                      <>
+                        {' '}
+                        <a
+                          href={approveSuccess.eventUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="font-semibold underline"
+                        >
+                          Abrir evento no Google Calendar
+                        </a>
+                        .
+                      </>
+                    ) : null}
+                  </div>
+                  {approveSuccess.warning ? (
+                    <div className="rounded-lg border border-yellow-200 bg-yellow-50 px-4 py-3 text-yellow-900">
+                      Status atualizado, mas o evento não foi criado: {approveSuccess.warning}
+                    </div>
+                  ) : null}
+                </div>
+              ) : (
+                <dl className="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-gray-700">
+                  <dt className="font-semibold">Nome</dt>
+                  <dd>{approveTarget.name}</dd>
+                  <dt className="font-semibold">Email</dt>
+                  <dd className="break-all">{approveTarget.email}</dd>
+                  <dt className="font-semibold">Data</dt>
+                  <dd>{formatDatePtBr(approveTarget.date)}</dd>
+                  <dt className="font-semibold">Horário</dt>
+                  <dd>{approveTarget.time}</dd>
+                  <dt className="font-semibold">Duração</dt>
+                  <dd>60 minutos</dd>
+                  <dt className="font-semibold">Calendário</dt>
+                  <dd className="break-all">omixamovatsug@gmail.com</dd>
+                </dl>
+              )}
+
+              {approveError ? (
+                <div className="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-800">
+                  {approveError}
+                </div>
+              ) : null}
+            </div>
+
+            <div className="flex justify-end gap-2 border-t px-6 py-4">
+              {approveSuccess ? (
+                <button
+                  type="button"
+                  onClick={closeApproveModal}
+                  className="rounded-lg bg-[#2563EB] px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
+                >
+                  Fechar
+                </button>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    onClick={closeApproveModal}
+                    disabled={approveSubmitting}
+                    className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => void confirmApprove()}
+                    disabled={approveSubmitting}
+                    className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {approveSubmitting ? 'Agendando…' : 'OK, agendar'}
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

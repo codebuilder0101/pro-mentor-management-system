@@ -102,12 +102,11 @@ export async function POST(request: Request) {
 
     const newUserId = signUpData.user?.id;
     if (newUserId) {
-      const { error: profileErr } = await service
-        .from('profiles')
-        .update({ full_name: fullName, email })
-        .eq('id', newUserId);
-      if (profileErr) {
-        console.warn('[api/auth/signup] profiles full_name sync', profileErr);
+      const { error: confirmErr } = await service.auth.admin.updateUserById(newUserId, {
+        email_confirm: true,
+      });
+      if (confirmErr) {
+        console.warn('[api/auth/signup] auto-confirm', confirmErr);
       }
     }
 
